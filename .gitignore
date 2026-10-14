@@ -1,0 +1,21 @@
+# dependencias
+/node_modules
+
+# next
+/.next/
+/out/
+next-env.d.ts
+
+# build
+/build
+
+# env (nunca subir secretos)
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# sistema
+.DS_Store
+*.log
