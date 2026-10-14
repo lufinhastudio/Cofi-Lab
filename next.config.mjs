@@ -13,11 +13,23 @@ const privateHeaders = [
   { key: "X-Robots-Tag", value: "noindex, nofollow" }
 ];
 
+// Las URLs del sitio anterior (link en bio, Google) siguen funcionando.
+const legacyClientSlugs = ["angus", "casuna", "uruguai", "bahillo", "izone", "aba"];
+
 const nextConfig = {
   poweredByHeader: false,
   images: {
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }]
+    // Cloudinary redimensiona y elige formato (ver lib/imageLoader.js).
+    loader: "custom",
+    loaderFile: "./lib/imageLoader.js"
+  },
+  async redirects() {
+    return [
+      { source: "/about", destination: "/nosotras", permanent: true },
+      { source: "/portfolio", destination: "/clientes", permanent: true },
+      { source: "/contact", destination: "/contacto", permanent: true },
+      ...legacyClientSlugs.map((slug) => ({ source: `/${slug}`, destination: `/clientes/${slug}`, permanent: true }))
+    ];
   },
   async headers() {
     return [

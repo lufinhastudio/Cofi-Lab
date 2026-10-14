@@ -1,25 +1,30 @@
-// Datos fijos del sitio (según la propuesta: textos institucionales, contacto y
-// redes quedan en código, no en el admin). Completar con los datos reales.
+// Datos fijos del sitio: nombre, contacto, redes y menú.
 
 export const site = {
-  name: "COFI LAB",
-  description: "Estudio creativo. Portfolio, La Cofiteca y contacto.",
+  name: "CoFi Lab",
+  tagline: "Ideas que se prueban. Marcas que se construyen",
+  // Bio de Instagram
+  motto: "Probamos, mezclamos y transformamos ideas.",
+  fullName: "CoFi Laboratorio Creativo",
+  description:
+    "Estudio de comunicación y contenido: estrategia, creatividad y producción audiovisual para desarrollar la comunicación en redes de cada marca.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  contact: {
-    // Formato internacional sin "+" ni espacios, ej: 5493511234567
-    whatsapp: "",
-    email: "",
-    defaultWhatsappMessage: "Hola COFI LAB! Les escribo desde la web."
-  },
-  socials: [
-    { label: "Instagram", href: "https://www.instagram.com/cofi_labb/" }
-    // { label: "TikTok", href: "" },
-    // { label: "LinkedIn", href: "" }
+  logo: "/brand/cofi-logo.png",
+  instagram: { handle: "@cofi_labb", url: "https://www.instagram.com/cofi_labb/" },
+  team: [
+    { name: "Cami", handle: "@camicergneux", url: "https://www.instagram.com/camicergneux/" },
+    { name: "Sofi", handle: "@sofimaccarone", url: "https://www.instagram.com/sofimaccarone/" }
   ],
+  keywords: ["Estrategia", "Redes sociales", "Producción audiovisual", "Paid media", "Fotografía publicitaria", "Laboratorio creativo"],
+  contact: {
+    email: "",
+    // Formato internacional sin "+" ni espacios, ej: 5493511234567. Vacío = no se muestra.
+    whatsapp: ""
+  },
   nav: [
-    { label: "Trabajos", href: "#trabajos" },
-    { label: "La Cofiteca", href: "#cofiteca" },
-    { label: "Nosotros", href: "#nosotros" },
-    { label: "Contacto", href: "#contacto" }
+    { label: "Inicio", href: "/" },
+    { label: "Sobre nosotras", href: "/nosotras" },
+    { label: "Clientes", href: "/clientes" },
+    { label: "Contacto", href: "/contacto" }
   ]
 };

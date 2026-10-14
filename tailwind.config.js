@@ -1,49 +1,73 @@
 /** @type {import('tailwindcss').Config} */
 
-// Paleta provisoria. Se reemplaza con los colores reales de COFI LAB
-// cuando terminemos de relevar la página actual y el Instagram.
-const cofiInk = "#1B1B1B";
-const cofiPaper = "#FAF7F2";
-const cofiAccent = "#E2553A";
-const cofiMuted = "#6B6560";
+// Paleta tomada del sitio actual de CoFi Lab (Pixieset), con algún ajuste de contraste.
+const colors = {
+  paper: "#F9F8F6", // fondo general
+  sand: "#EAE9E5", // paneles (testimonios, nosotras, contacto)
+  ink: "#373737", // texto principal
+  heading: "#42403B", // títulos
+  muted: "#7D7973", // texto secundario (más contraste que el #97938E original)
+  stone: "#97938E", // botones y detalles
+  line: "#DAD8D2", // bordes finos
+  azul: "#2F4FA8", // azul tinta de los garabatos de su Instagram
+  night: "#2B2925" // fondo oscuro cálido (footer, panel de contacto)
+};
 
 module.exports = {
   content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}", "./lib/**/*.{js,jsx}"],
   theme: {
     extend: {
-      colors: {
-        cofi: {
-          ink: cofiInk,
-          paper: cofiPaper,
-          accent: cofiAccent,
-          muted: cofiMuted
-        },
-        ink: cofiInk,
-        paper: cofiPaper,
-        accent: cofiAccent,
-        muted: cofiMuted
-      },
+      colors: { cofi: colors, ...colors },
       fontFamily: {
-        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"]
+        sans: ["var(--font-raleway)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-poppins)", "ui-sans-serif", "system-ui", "sans-serif"],
+        hand: ["var(--font-hand)", "cursive"]
       },
-      boxShadow: {
-        soft: "0 16px 44px rgb(27 27 27 / 0.08)",
-        card: "0 4px 24px rgb(27 27 27 / 0.06)"
+      letterSpacing: {
+        label: "0.19em"
       },
-      borderRadius: {
-        "2xl": "1rem",
-        "3xl": "1.25rem",
-        "4xl": "1.5rem"
+      maxWidth: {
+        site: "78rem",
+        text: "46rem"
       },
       keyframes: {
         fadeInUp: {
-          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "0%": { opacity: "0", transform: "translateY(18px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" }
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" }
+        },
+        progress: {
+          "0%": { transform: "scaleX(0)" },
+          "100%": { transform: "scaleX(1)" }
+        },
+        wiggle: {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "30%": { transform: "rotate(-6deg)" },
+          "60%": { transform: "rotate(4deg)" }
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0) rotate(var(--r, 0deg))" },
+          "50%": { transform: "translateY(-6px) rotate(var(--r, 0deg))" }
+        },
+        draw: {
+          "0%": { strokeDashoffset: "var(--len, 300)" },
+          "100%": { strokeDashoffset: "0" }
         }
       },
       animation: {
-        "fade-in-up": "fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both"
+        "fade-in-up": "fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "fade-in": "fadeIn 0.4s ease both",
+        marquee: "marquee 38s linear infinite",
+        wiggle: "wiggle 0.6s ease-in-out",
+        float: "float 5s ease-in-out infinite",
+        draw: "draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) both"
       }
     }
   },

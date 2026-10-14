@@ -55,12 +55,14 @@ Sin `DATABASE_URL` la landing se ve igual con el contenido de ejemplo de `data/p
 ### Base de datos
 
 1. Crear el proyecto en Neon y copiar la connection string a `DATABASE_URL`.
-2. Ejecutar `docs/neon-schema.sql` completo en el SQL Editor de Neon.
+2. Crear las tablas: `npm run db:schema` (o pegar `docs/neon-schema.sql` en el SQL Editor de Neon).
 3. Crear el primer admin:
 
 ```bash
-npm run create-admin -- admin@email.com "password-segura" "Nombre"
+npm run create-admin -- admin@email.com "Nombre"
 ```
+
+La contraseña se pide por teclado y no se muestra (mínimo 10 caracteres).
 
 ### Vercel
 

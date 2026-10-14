@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Admin · COFI LAB",
+  title: { absolute: "Admin · COFI LAB" },
   robots: { index: false, follow: false }
 };
 

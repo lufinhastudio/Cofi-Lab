@@ -1,0 +1,26 @@
+{
+  "angus": {
+    "industry": "Hamburguesería",
+    "services": ["Estrategia de contenidos", "Gestión de redes", "Comunidad", "Fotografía", "Reels y campañas"]
+  },
+  "casuna": {
+    "industry": "Muebles y deco para el hogar",
+    "services": ["Estrategia de contenidos", "Gestión de redes", "Identidad de marca", "Fotografía de producto", "Reels"]
+  },
+  "uruguai": {
+    "industry": "Yerba mate",
+    "services": ["Estrategia de comunicación", "Gestión de redes", "Posicionamiento comercial", "Fotografía", "Reels y campañas"]
+  },
+  "bahillo": {
+    "industry": "Heladería artesanal",
+    "services": ["Estrategia de contenidos", "Gestión de redes", "Reposicionamiento", "Fotografía", "Reels"]
+  },
+  "izone": {
+    "industry": "Tecnología · productos Apple",
+    "services": ["Estrategia de contenidos", "Gestión de redes", "Fotografía e-commerce", "Fotografía publicitaria", "Reels"]
+  },
+  "aba": {
+    "industry": "Bebidas · 3 marcas propias",
+    "services": ["Estrategia de contenidos", "Gestión de redes", "Fotografía de producto", "Reels"]
+  }
+}

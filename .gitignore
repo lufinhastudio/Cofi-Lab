@@ -19,3 +19,6 @@ next-env.d.ts
 # sistema
 .DS_Store
 *.log
+
+# paquetes de sincronización
+/.sync

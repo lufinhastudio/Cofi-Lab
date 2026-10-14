@@ -119,3 +119,41 @@ create table if not exists testimonials (
 );
 
 create index if not exists testimonials_public_idx on testimonials(visible, sort_order);
+
+-- ---------------------------------------------------------------------------
+-- v2 · Estructura real del sitio (migración desde Pixieset)
+-- ---------------------------------------------------------------------------
+
+-- Página de cada cliente: título de la sección de videos y bloque de Instagram
+alter table projects add column if not exists videos_heading text;
+alter table projects add column if not exists instagram_url text;
+alter table projects add column if not exists instagram_label text;
+alter table projects add column if not exists instagram_image_url text;
+
+-- Secciones de la página de un cliente, en orden:
+--   kind = 'gallery' (fotos; layout grid | row | square | single | feature)
+--   kind = 'video'   (portada + link al reel en link_url)
+alter table project_sections add column if not exists kind text not null default 'gallery';
+alter table project_sections add column if not exists layout text not null default 'grid';
+alter table project_sections add column if not exists link_url text;
+alter table project_sections alter column title drop not null;
+
+-- Foto que acompaña cada testimonio
+alter table testimonials add column if not exists image_url text;
+
+-- Mensajes del formulario de contacto
+create table if not exists contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text not null,
+  services text[] not null default '{}',
+  message text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists contact_messages_created_idx on contact_messages(created_at desc);
+
+-- v3 · Resumen rápido de cada cliente (rubro + etiquetas de lo que hicimos)
+alter table projects add column if not exists industry text;
+alter table projects add column if not exists services text[] not null default '{}';
