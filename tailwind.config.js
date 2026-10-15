@@ -9,7 +9,12 @@ const colors = {
   muted: "#7D7973", // texto secundario (más contraste que el #97938E original)
   stone: "#97938E", // botones y detalles
   line: "#DAD8D2", // bordes finos
-  azul: "#2F4FA8", // azul tinta de los garabatos de su Instagram
+  bordo: "#7A3418", // color protagonista de su Instagram (títulos y bandas)
+  rojo: "#D4483A", // corazones y frutillas
+  rosa: "#E3A7AE", // florcitas de vichy
+  amarillo: "#F2BC5A", // mariposa y estrellas
+  celeste: "#5B8BD0", // detalles de la mariposa (uso mínimo)
+  azul: "#5B8BD0", // alias de compatibilidad
   night: "#2B2925" // fondo oscuro cálido (footer, panel de contacto)
 };
 

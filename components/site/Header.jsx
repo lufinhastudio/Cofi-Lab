@@ -47,7 +47,7 @@ export function Header() {
           <ul className="flex items-center gap-8 font-display text-[13px] font-light text-heading">
             {site.nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} aria-current={isActive(item.href) ? "page" : undefined} className="link-underline pb-0.5 transition-colors hover:text-azul aria-[current=page]:text-azul">
+                <Link href={item.href} aria-current={isActive(item.href) ? "page" : undefined} className="link-underline pb-0.5 transition-colors hover:text-bordo aria-[current=page]:text-bordo">
                   {item.label}
                 </Link>
               </li>

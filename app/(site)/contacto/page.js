@@ -3,7 +3,7 @@ import { contactPage, home } from "@/config/content";
 import { site } from "@/config/site";
 import { legacyImage } from "@/lib/legacy";
 import { ContactForm } from "@/components/site/ContactForm";
-import { CurvedArrow, Sparkle } from "@/components/site/Doodles";
+import { WashiTape } from "@/components/site/Stickers";
 import { InstagramIcon } from "@/components/site/icons";
 import { Reveal } from "@/components/site/Reveal";
 
@@ -26,7 +26,7 @@ export default function ContactPage() {
             </span>
             <h1 className="mt-10 font-display text-[30px] font-light leading-tight text-paper sm:text-[38px]">
               {contactPage.title}
-              <span className="mt-1 block font-hand text-[30px] text-[#9DB2F2] sm:text-[34px]">y la probamos juntas</span>
+              <span className="mt-1 block font-hand text-[30px] text-[#E3A7AE] sm:text-[34px]">y la probamos juntas</span>
             </h1>
             <div className="mt-6 space-y-1 text-[14.5px] leading-[1.9] text-paper/70">
               {contactPage.intro.map((line) => (
@@ -37,13 +37,13 @@ export default function ContactPage() {
 
           {/* Foto tipo polaroid */}
           <Reveal className="relative z-10 mx-auto mt-12 w-[78%] max-w-[300px] lg:mx-0">
-            <figure className="rotate-[-4deg] bg-paper p-3 pb-10 shadow-[0_25px_50px_-20px_rgb(0_0_0/0.6)] transition-transform duration-500 hover:rotate-[-1deg]">
+            <figure className="relative rotate-[-4deg] bg-paper p-3 pb-10 shadow-[0_25px_50px_-20px_rgb(0_0_0/0.6)] transition-transform duration-500 hover:rotate-[-1deg]">
               <span className="relative block aspect-square overflow-hidden">
                 <Image src={legacyImage(teamPhoto.src)} alt={teamPhoto.alt} fill sizes="300px" className="object-cover" />
               </span>
               <figcaption className="absolute bottom-2.5 left-0 right-0 text-center font-hand text-[22px] text-heading">Cami & Sofi ✦</figcaption>
+              <WashiTape className="-top-3 left-1/2 -translate-x-1/2" rotate={-6} />
             </figure>
-            <CurvedArrow className="absolute -right-6 -top-10 h-14 w-20 rotate-[160deg] text-[#9DB2F2] sm:-right-12" />
           </Reveal>
 
           <div className="relative z-10 mt-12 flex flex-wrap gap-x-6 gap-y-3 text-[13px] text-paper/70">
@@ -58,8 +58,7 @@ export default function ContactPage() {
             ) : null}
           </div>
 
-          <Sparkle draw={false} className="absolute right-10 top-12 h-8 w-8 animate-float text-[#9DB2F2]/60 [--r:12deg]" />
-          <span className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-azul/30 blur-3xl" aria-hidden="true" />
+          <span className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-bordo/30 blur-3xl" aria-hidden="true" />
         </aside>
 
         {/* Carta */}

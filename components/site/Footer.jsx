@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/config/site";
 import { BackToTop } from "./BackToTop";
-import { HandHeart, Squiggle, TestTube } from "./Doodles";
+import { HandHeart, Squiggle } from "./Doodles";
+import { TornEdge } from "./Stickers";
 import { ArrowIcon, InstagramIcon } from "./icons";
 import { Reveal } from "./Reveal";
 
@@ -10,16 +11,17 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-10 overflow-hidden bg-night text-paper">
+    <footer className="relative mt-10 bg-night text-paper">
+      <TornEdge className="absolute -top-5 left-0 text-night sm:-top-7" />
       {/* Cinta con lo que hacemos */}
-      <div className="relative -rotate-1 border-y border-paper/10 bg-azul py-3.5 text-white" aria-hidden="true">
+      <div className="relative -rotate-1 overflow-hidden border-y border-paper/10 bg-bordo py-3.5 text-paper" aria-hidden="true">
         <div className="flex w-max animate-marquee gap-10 whitespace-nowrap font-hand text-[24px] leading-none">
           {[0, 1].map((copy) => (
             <span key={copy} className="flex items-center gap-10">
               {site.keywords.map((word) => (
                 <span key={`${copy}-${word}`} className="flex items-center gap-10">
                   {word}
-                  <span className="text-[16px] text-white/60">✦</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-paper/50" />
                 </span>
               ))}
             </span>
@@ -27,16 +29,16 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-site relative pb-10 pt-20 lg:pt-28">
+      <div className="container-site relative overflow-hidden pb-10 pt-20 lg:pt-28">
         {/* Llamado principal */}
         <Reveal className="grid items-end gap-10 lg:grid-cols-[1.4fr_1fr]">
           <div>
-            <p className="font-hand text-[26px] text-[#9DB2F2]">¿Tenés una idea dando vueltas?</p>
+            <p className="font-hand text-[26px] text-[#E3A7AE]">¿Tenés una idea dando vueltas?</p>
             <h2 className="mt-3 font-display text-[40px] font-light leading-[1.05] text-paper sm:text-[60px] lg:text-[72px]">
               Probémosla
               <span className="relative inline-block">
                 <span className="relative z-10">&nbsp;juntas.</span>
-                <Squiggle className="absolute -bottom-2 left-4 h-4 w-[90%] text-[#9DB2F2]" />
+                <Squiggle className="absolute -bottom-2 left-4 h-4 w-[90%] text-[#E3A7AE]" />
               </span>
             </h2>
           </div>
@@ -51,7 +53,6 @@ export function Footer() {
                 <ArrowIcon className="h-2.5 w-5" />
               </span>
             </Link>
-            <TestTube className="hidden h-20 w-14 rotate-12 text-[#9DB2F2] lg:block" />
           </div>
         </Reveal>
 
@@ -66,6 +67,7 @@ export function Footer() {
             <p className="mt-5 max-w-[16rem] text-[14px] leading-relaxed text-paper/60">
               {site.fullName}. {site.motto}
             </p>
+            <p className="mt-6 font-hand text-[20px] text-[#E3A7AE]">Próximamente: La CoFiteca</p>
           </div>
 
           <nav aria-label="Pie de página">
@@ -74,7 +76,7 @@ export function Footer() {
               {site.nav.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="group inline-flex items-center gap-0 text-[15px] text-paper/80 transition-all duration-300 hover:gap-2 hover:text-paper">
-                    <span className="h-px w-0 bg-[#9DB2F2] transition-all duration-300 group-hover:w-4" aria-hidden="true" />
+                    <span className="h-px w-0 bg-[#E3A7AE] transition-all duration-300 group-hover:w-4" aria-hidden="true" />
                     {item.label}
                   </Link>
                 </li>
@@ -136,7 +138,7 @@ export function Footer() {
         <div className="mt-20 flex flex-wrap items-center justify-between gap-6 text-[12px] text-paper/45">
           <p className="flex items-center gap-2">
             © {year} {site.name} · Hecho con
-            <HandHeart draw={false} className="h-4 w-4 text-[#9DB2F2]" />
+            <HandHeart draw={false} className="h-4 w-4 text-rojo" />
             y mate
           </p>
           <BackToTop />

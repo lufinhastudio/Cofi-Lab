@@ -21,6 +21,12 @@
     @apply font-display text-heading;
   }
 
+  /* Títulos principales en bordó, como en su Instagram */
+  h1,
+  h2 {
+    @apply text-bordo;
+  }
+
   ::selection {
     @apply bg-sand text-heading;
   }
@@ -137,4 +143,12 @@
 @keyframes slideInLeft {
   from { opacity: 0; transform: translateX(-28px); }
   to { opacity: 1; transform: none; }
+}
+
+/* Papel cuadriculado (como los fondos de sus posteos) */
+.bg-grid-paper {
+  background-color: #ECE8E0;
+  background-image: linear-gradient(rgb(66 64 59 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(66 64 59 / 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
 }

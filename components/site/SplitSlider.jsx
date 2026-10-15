@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowIcon } from "./icons";
+import { GinghamFlower } from "./Stickers";
 
 // Bloque partido (texto + foto) con varias señales de que hay más para ver:
 //   · pestañas con el nombre de cada slide
@@ -11,7 +12,7 @@ import { ArrowIcon } from "./icons";
 //   · tarjeta "Siguiente" sobre la foto con miniatura
 //   · arrastrar / deslizar la foto para cambiar
 // Se usa en Testimonios (Inicio) y en Quiénes somos (Nosotras).
-export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "right" }) {
+export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "right", decorated = false }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -60,7 +61,7 @@ export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "rig
     <section
       aria-roledescription="carrusel"
       aria-label={eyebrow}
-      className={cn("grid overflow-hidden bg-sand md:grid-cols-2", paused && "is-paused")}
+      className={cn("relative grid overflow-hidden md:grid-cols-2", decorated ? "bg-grid-paper" : "bg-sand", paused && "is-paused")}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -125,7 +126,10 @@ export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "rig
 
       {/* Texto */}
       <div className={cn("flex flex-col justify-center px-7 py-14 sm:px-14 lg:px-20", imageSide === "right" ? "md:order-1" : "md:order-2")}>
-        {eyebrow ? <p className="label">{eyebrow}</p> : null}
+        <div className="relative">
+          {eyebrow ? <p className="label">{eyebrow}</p> : null}
+          {decorated ? <GinghamFlower className="absolute -top-10 right-0 h-16 w-16 animate-float sm:right-8" rotate={-12} /> : null}
+        </div>
 
         {/* Pestañas */}
         {total > 1 ? (
@@ -151,12 +155,12 @@ export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "rig
                     canAutoplay ? (
                       <span
                         key={`p-${index}`}
-                        className="progress-bar block h-full bg-azul"
+                        className="progress-bar block h-full bg-bordo"
                         style={{ "--duration": `${autoplay}ms` }}
                         onAnimationEnd={() => go(1)}
                       />
                     ) : (
-                      <span className="block h-full bg-azul" />
+                      <span className="block h-full bg-bordo" />
                     )
                   ) : null}
                 </span>
@@ -173,7 +177,7 @@ export function SplitSlider({ eyebrow, slides, autoplay = 7000, imageSide = "rig
         >
           <h3 className="font-display text-[22px] font-light text-heading sm:text-[26px]">
             {slide.title}
-            {slide.subtitle ? <span className="mt-1 block font-hand text-[20px] text-azul">{slide.subtitle}</span> : null}
+            {slide.subtitle ? <span className="mt-1 block font-hand text-[20px] text-bordo">{slide.subtitle}</span> : null}
           </h3>
           <div className="mt-6 space-y-4 text-[14.5px] leading-[1.9] text-ink">
             {slide.body.map((paragraph, paragraphIndex) => (

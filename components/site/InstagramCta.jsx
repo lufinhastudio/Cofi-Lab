@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { site } from "@/config/site";
-import { HandHeart, TestTube } from "./Doodles";
+import { HandHeart } from "./Doodles";
 import { ArrowIcon } from "./icons";
 import { Reveal } from "./Reveal";
 
@@ -10,7 +10,6 @@ export function InstagramCta({ handle, url }) {
   return (
     <section className="container-site py-24 lg:py-32">
       <Reveal className="relative mx-auto max-w-[56rem]">
-        <TestTube className="absolute -left-4 -top-14 hidden h-24 w-16 -rotate-12 sm:block" />
         <a
           href={url}
           target="_blank"
@@ -20,7 +19,7 @@ export function InstagramCta({ handle, url }) {
           {/* Avatar con anillo que gira */}
           <span className="relative grid h-28 w-28 shrink-0 place-items-center">
             <span
-              className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,#2F4FA8,#9DB2F2,#EAE9E5,#2F4FA8)] transition-transform duration-[2000ms] ease-out group-hover:rotate-180"
+              className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,#7A3418,#D4483A,#E3A7AE,#F2BC5A,#7A3418)] transition-transform duration-[2000ms] ease-out group-hover:rotate-180"
               aria-hidden="true"
             />
             <span className="relative grid h-[104px] w-[104px] place-items-center rounded-full bg-paper">
@@ -31,7 +30,7 @@ export function InstagramCta({ handle, url }) {
           </span>
 
           <span className="flex-1">
-            <span className="font-hand text-[24px] text-azul">Seguinos en Instagram</span>
+            <span className="font-hand text-[24px] text-bordo">Seguinos en Instagram</span>
             <span className="mt-1 block font-display text-[22px] font-normal text-heading">{handle}</span>
             <span className="mt-2 flex items-center justify-center gap-2 text-[14.5px] text-muted sm:justify-start">
               {site.motto}
@@ -40,7 +39,7 @@ export function InstagramCta({ handle, url }) {
           </span>
 
           <span className="relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-heading px-6 py-3 font-display text-[11px] uppercase tracking-label text-white">
-            <span className="absolute inset-0 -translate-x-full bg-azul transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
+            <span className="absolute inset-0 -translate-x-full bg-bordo transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
             <span className="relative">Seguir</span>
             <ArrowIcon className="relative h-2.5 w-6 transition-transform duration-300 group-hover:translate-x-1" />
           </span>

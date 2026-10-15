@@ -24,6 +24,7 @@ export default function AboutPage() {
       <SplitSlider
         eyebrow="Quiénes somos"
         autoplay={9000}
+        decorated
         slides={about.team.map((member) => ({
           id: member.name,
           title: member.name,

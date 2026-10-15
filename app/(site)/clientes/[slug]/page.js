@@ -7,7 +7,8 @@ import { Gallery } from "@/components/site/Gallery";
 import { InstagramBlock } from "@/components/site/InstagramBlock";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoCard } from "@/components/site/VideoCard";
-import { CurvedArrow, Sparkle, Squiggle } from "@/components/site/Doodles";
+import { Squiggle } from "@/components/site/Doodles";
+import { TornEdge, WashiTape } from "@/components/site/Stickers";
 import { ArrowIcon, InstagramIcon, PlayIcon } from "@/components/site/icons";
 
 export const revalidate = 60;
@@ -63,9 +64,8 @@ export default async function ProjectPage({ params }) {
             </Link>
 
             {project.industry ? (
-              <p className="mt-8 flex animate-fade-in-up items-center gap-2 font-hand text-[24px] leading-none text-azul">
+              <p className="mt-8 flex animate-fade-in-up items-center gap-2 font-hand text-[24px] leading-none text-bordo">
                 {project.industry}
-                <Sparkle className="doodle-draw is-drawn h-5 w-5" />
               </p>
             ) : null}
 
@@ -78,24 +78,6 @@ export default async function ProjectPage({ params }) {
               <p className="mt-9 max-w-[34rem] animate-fade-in-up text-[17px] leading-[1.75] text-ink [animation-delay:160ms]">
                 <Emphasis text={lead} />
               </p>
-            ) : null}
-
-            {/* Qué hicimos */}
-            {project.services.length ? (
-              <div className="mt-8 animate-fade-in-up [animation-delay:240ms]">
-                <p className="label">Qué hicimos</p>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {project.services.map((service, index) => (
-                    <li
-                      key={service}
-                      className="animate-fade-in-up rounded-full border border-azul/25 bg-azul/[0.06] px-3.5 py-1.5 text-[13px] text-azul"
-                      style={{ animationDelay: `${300 + index * 70}ms` }}
-                    >
-                      {service}
-                    </li>
-                  ))}
-                </ul>
-              </div>
             ) : null}
 
             {/* Números rápidos + accesos */}
@@ -113,7 +95,7 @@ export default async function ProjectPage({ params }) {
                     href="#reels"
                     className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full bg-heading py-2.5 pl-2.5 pr-5 font-display text-[11px] uppercase tracking-label text-white"
                   >
-                    <span className="absolute inset-0 -translate-x-full bg-azul transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
+                    <span className="absolute inset-0 -translate-x-full bg-bordo transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
                     <span className="relative grid h-7 w-7 place-items-center rounded-full bg-white text-heading">
                       <PlayIcon className="ml-0.5 h-3.5 w-3.5" />
                     </span>
@@ -147,6 +129,7 @@ export default async function ProjectPage({ params }) {
                 <span className="relative block aspect-[4/5] overflow-hidden">
                   <Image src={collage[1]} alt="" fill sizes="200px" className="object-cover" />
                 </span>
+                <WashiTape className="-top-3 left-1/2 h-6 w-16 -translate-x-1/2" rotate={-8} />
               </div>
             ) : null}
             {collage[2] ? (
@@ -154,6 +137,7 @@ export default async function ProjectPage({ params }) {
                 <span className="relative block aspect-square overflow-hidden">
                   <Image src={collage[2]} alt="" fill sizes="180px" className="object-cover" />
                 </span>
+                <WashiTape className="-top-3 left-1/2 h-6 w-16 -translate-x-1/2" rotate={6} color="#E3A7AE" />
               </div>
             ) : null}
             {videos[0] ? (
@@ -163,7 +147,7 @@ export default async function ProjectPage({ params }) {
                 rel="noopener noreferrer"
                 className="group absolute bottom-[4%] right-[4%] flex animate-fade-in-up items-center gap-3 rounded-full bg-white/90 py-1.5 pl-1.5 pr-5 shadow-[0_15px_35px_-15px_rgb(0_0_0/0.5)] backdrop-blur transition-transform duration-300 [animation-delay:560ms] hover:-translate-y-0.5"
               >
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-azul text-white transition-transform duration-500 group-hover:scale-110">
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-bordo text-white transition-transform duration-500 group-hover:scale-110">
                   <PlayIcon className="ml-0.5 h-4 w-4" />
                 </span>
                 <span className="leading-tight">
@@ -178,15 +162,14 @@ export default async function ProjectPage({ params }) {
 
       {/* ── Reels / campañas ───────────────────────────────────────────── */}
       {videos.length ? (
-        <section id="reels" className="scroll-mt-24 bg-sand py-16 lg:py-24">
+        <section id="reels" className="relative scroll-mt-24">
+          <TornEdge className="text-[#ECE8E0]" />
+          <div className="bg-grid-paper relative py-16 lg:py-24">
           <div className="container-site">
             <div className="mx-auto max-w-[72rem]">
               <Reveal className="flex flex-wrap items-end justify-between gap-4">
-                <h2 className="font-display text-[26px] font-semibold sm:text-[32px]">{project.videosHeading || "Reels destacados"}</h2>
-                <p className="flex items-center gap-2 font-hand text-[20px] text-azul">
-                  tocá para verlos en Instagram
-                  <CurvedArrow className="h-8 w-12 translate-y-3 rotate-[60deg]" />
-                </p>
+                <h2 className="font-display text-[26px] font-bold uppercase text-bordo sm:text-[32px]">{project.videosHeading || "Reels destacados"}</h2>
+                <p className="font-hand text-[20px] text-bordo">tocá para verlos en Instagram</p>
               </Reveal>
               <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0">
                 {videos.map((video, index) => (
@@ -197,6 +180,8 @@ export default async function ProjectPage({ params }) {
               </div>
             </div>
           </div>
+          </div>
+          <TornEdge className="text-[#ECE8E0]" flip />
         </section>
       ) : null}
 
@@ -204,7 +189,7 @@ export default async function ProjectPage({ params }) {
       {rest.length ? (
         <section className="container-site py-16 lg:py-24">
           <Reveal className="mx-auto grid max-w-[72rem] gap-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
-            <p className="font-hand text-[28px] leading-tight text-azul">Cómo acompañamos a {project.clientName}</p>
+            <p className="font-hand text-[28px] leading-tight text-bordo">Cómo acompañamos a {project.clientName}</p>
             <div className="space-y-4 font-display text-[19px] font-light leading-[1.7] text-heading sm:text-[22px]">
               {rest.map((paragraph) => (
                 <p key={paragraph}>

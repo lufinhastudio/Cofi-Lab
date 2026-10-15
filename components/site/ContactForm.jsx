@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowIcon } from "./icons";
-import { HandHeart, Sparkle, TestTube } from "./Doodles";
+import { Sparkle } from "./Doodles";
 
 // Formulario en forma de carta: se completa como una frase.
 // Mismos datos que antes (nombre, email, servicios, mensaje) + campo trampa anti-bots.
 const blank =
-  "mx-1 inline-block min-w-0 border-0 border-b-2 border-dashed border-stone/60 bg-transparent px-1 pb-0.5 align-baseline font-display text-[18px] font-normal text-azul outline-none transition-colors placeholder:font-light placeholder:text-stone/50 focus:border-solid focus:border-azul focus:ring-0 sm:text-[22px]";
+  "mx-1 inline-block min-w-0 border-0 border-b-2 border-dashed border-stone/60 bg-transparent px-1 pb-0.5 align-baseline font-display text-[18px] font-normal text-bordo outline-none transition-colors placeholder:font-light placeholder:text-stone/50 focus:border-solid focus:border-bordo focus:ring-0 sm:text-[22px]";
 
 export function ContactForm({ services }) {
   const [status, setStatus] = useState("idle");
@@ -49,8 +49,7 @@ export function ContactForm({ services }) {
     const firstName = name.trim().split(" ")[0];
     return (
       <div className="relative flex min-h-[460px] animate-fade-in flex-col items-center justify-center text-center" role="status">
-        <TestTube className="doodle-draw is-drawn h-24 w-16" />
-        <p className="mt-6 font-hand text-[34px] leading-none text-azul">¡Llegó al laboratorio!</p>
+        <p className="font-hand text-[34px] leading-none text-bordo">¡Llegó al laboratorio!</p>
         <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-ink">
           Gracias{firstName ? `, ${firstName}` : ""}. Ya tenemos tu idea en la mesa de pruebas: te respondemos a la brevedad.
         </p>
@@ -64,7 +63,7 @@ export function ContactForm({ services }) {
 
   return (
     <form onSubmit={submit} className="relative">
-      <p className="font-hand text-[30px] leading-none text-azul sm:text-[36px]">¡Hola CoFi!</p>
+      <p className="font-hand text-[30px] leading-none text-bordo sm:text-[36px]">¡Hola CoFi!</p>
 
       <div className="mt-8 font-display text-[18px] font-light leading-[2.4] text-heading sm:text-[22px]">
         Me llamo
@@ -111,7 +110,7 @@ export function ContactForm({ services }) {
                 className={cn(
                   "group inline-flex cursor-pointer select-none items-center gap-2 rounded-full border px-4 py-2 text-[13px] transition-all duration-300",
                   active
-                    ? "-rotate-1 border-azul bg-azul text-white shadow-[0_8px_20px_-10px_rgb(47_79_168/0.8)]"
+                    ? "-rotate-1 border-bordo bg-bordo text-white shadow-[0_8px_20px_-10px_rgb(122_52_24/0.6)]"
                     : "border-heading/20 bg-white/40 text-ink hover:-translate-y-0.5 hover:border-heading/50",
                   index % 2 === 1 && active && "rotate-1"
                 )}
@@ -125,7 +124,7 @@ export function ContactForm({ services }) {
                 <span
                   className={cn(
                     "grid h-4 w-4 place-items-center rounded-full border transition-all duration-300",
-                    active ? "border-white bg-white text-azul" : "border-heading/30 text-transparent group-hover:border-heading/60"
+                    active ? "border-white bg-white text-bordo" : "border-heading/30 text-transparent group-hover:border-heading/60"
                   )}
                   aria-hidden="true"
                 >
@@ -168,16 +167,15 @@ export function ContactForm({ services }) {
       ) : null}
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-6">
-        <p className="flex items-center gap-2 font-hand text-[22px] text-azul">
+        <p className="flex items-center gap-2 font-hand text-[22px] text-bordo">
           Firmado, {name.trim() ? name.trim().split(" ")[0] : "vos"}
-          <HandHeart className="doodle-draw is-drawn h-6 w-6" />
         </p>
         <button
           type="submit"
           disabled={status === "sending"}
           className="group relative inline-flex items-center gap-4 overflow-hidden rounded-full bg-heading py-4 pl-8 pr-6 font-display text-[11px] uppercase tracking-label text-white transition-transform duration-300 hover:-translate-y-0.5 disabled:opacity-60"
         >
-          <span className="absolute inset-0 -translate-x-full bg-azul transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
+          <span className="absolute inset-0 -translate-x-full bg-bordo transition-transform duration-500 ease-out group-hover:translate-x-0" aria-hidden="true" />
           <span className="relative">{status === "sending" ? "Enviando…" : "Enviar al laboratorio"}</span>
           <span className="relative grid h-7 w-7 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:rotate-[-35deg]">
             {status === "sending" ? <Sparkle draw={false} className="h-4 w-4 animate-spin text-white" /> : <ArrowIcon className="h-2.5 w-4" />}

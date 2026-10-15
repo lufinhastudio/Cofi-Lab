@@ -10,6 +10,13 @@ export const home = {
     "No solo creamos contenido: construimos posicionamiento, percepción de marca y sistemas de comunicación que acompañan el crecimiento del negocio con identidad y dirección.",
     "Trabajamos de forma cercana con cada proyecto, entendiendo su identidad, su contexto y sus objetivos para desarrollar una comunicación coherente, auténtica y sostenida en el tiempo."
   ],
+  // Datos de su posteo de primer aniversario en Instagram
+  stats: [
+    { value: "+12", label: "marcas", note: "confiaron en nosotras" },
+    { value: "+7.300", label: "contenidos", note: "sí, siete mil trescientos" },
+    { value: "+100", label: "reuniones", note: "con todas las minutas" },
+    { value: "2 + 2", label: "CoFis y asistentes", note: "Coca y Firu, ejecutivas" }
+  ],
   photos: [
     { src: "ov6XOGd/IMG_4358-74900f70-2500.jpg", alt: "Coca y Firu, las perritas de CoFi" },
     { src: "lykq9Ve/IMG_4356-b1a7cc9f-2500.jpg", alt: "Sofi y Cami, fundadoras de CoFi" },
