@@ -1,28 +1,20 @@
-import { Caveat_Brush, Poppins, Raleway } from "next/font/google";
+import { Poppins, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "@/config/site";
 
-// Mismas familias que el sitio actual, servidas desde el propio dominio.
+// Tipografías del Brand Book: Poppins (Black títulos · Bold subtítulos · Regular cuerpo)
+// y Space Mono (la voz del Laboratorio: solo etiquetas y datos).
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700", "900"],
   variable: "--font-poppins",
   display: "swap"
 });
 
-const raleway = Raleway({
+const spaceMono = Space_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-raleway",
-  display: "swap"
-});
-
-// Manuscrita para acentos, en la línea del logo (trazo de pincel redondeado).
-const hand = Caveat_Brush({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-hand",
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
   display: "swap"
 });
 
@@ -30,7 +22,6 @@ export const metadata = {
   metadataBase: new URL(site.url),
   title: { default: `${site.name} · ${site.tagline}`, template: `%s · ${site.name}` },
   description: site.description,
-  icons: { icon: site.logo, apple: site.logo },
   openGraph: {
     title: site.name,
     description: site.description,
@@ -41,12 +32,12 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#F9F8F6"
+  themeColor: "#AFC5FF"
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={`${poppins.variable} ${raleway.variable} ${hand.variable}`}>
+    <html lang="es" className={`${poppins.variable} ${spaceMono.variable}`}>
       <body>{children}</body>
     </html>
   );

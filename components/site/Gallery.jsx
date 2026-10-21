@@ -21,7 +21,7 @@ export function Gallery({ media, layout = "grid", alt = "", description }) {
       key={item.url}
       type="button"
       onClick={() => setOpen(index)}
-      className={cn("group relative block w-full overflow-hidden bg-sand", aspect, className)}
+      className={cn("group relative block w-full overflow-hidden bg-arena", aspect, className)}
       aria-label={`Ver foto ${index + 1} de ${images.length}${alt ? ` · ${alt}` : ""}`}
     >
       <Image

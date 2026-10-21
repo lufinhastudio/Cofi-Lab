@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sistema "Pop con método" del Brand Book de CoFi:
+   afuera (capa Pop) color, escala y actitud · adentro (capa Laboratorio) retícula, datos y proceso. */
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,30 +12,22 @@
   }
 
   body {
-    @apply bg-paper font-sans text-[15px] leading-[1.85] text-ink antialiased;
-    /* grano de papel muy sutil, como los posteos de su Instagram */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.26 0 0 0 0 0.25 0 0 0 0 0.23 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    @apply bg-crema font-sans text-[16px] leading-[1.65] text-tinta antialiased;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display text-heading;
-  }
-
-  /* Títulos principales en bordó, como en su Instagram */
-  h1,
-  h2 {
-    @apply text-bordo;
+    @apply font-display text-tinta;
   }
 
   ::selection {
-    @apply bg-sand text-heading;
+    @apply bg-lemon text-tinta;
   }
 
   :focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-stone;
+    @apply outline outline-2 outline-offset-2 outline-tinta;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -43,47 +38,81 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
 }
 
 @layer components {
-  /* Etiqueta en mayúsculas con tracking amplio (la firma tipográfica del sitio) */
-  .label {
-    @apply font-display text-[11px] font-normal uppercase tracking-label text-muted;
-  }
-
   .container-site {
     @apply mx-auto w-full max-w-site px-5 sm:px-8 lg:px-12;
   }
 
+  /* Títulos: Poppins Black, apretado */
+  .title-pop {
+    @apply font-display font-black leading-[0.98] tracking-[-0.02em];
+  }
+
+  /* Etiqueta de Laboratorio en Space Mono ("01 — Servicios") */
+  .mono-label {
+    @apply font-mono text-[13px] leading-none tracking-normal;
+  }
+
+  /* Etiqueta de etapa: bloque de color plano con texto mono en mayúsculas */
+  .stage-tag {
+    @apply inline-flex items-center px-2.5 py-1.5 font-mono text-[12px] uppercase leading-none text-tinta;
+  }
+
+  /* Botones en píldora, como en las aplicaciones del manual */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-[15px] font-bold transition-all duration-300 ease-out;
+  }
+  .btn-cacao {
+    @apply btn bg-cacao text-crema hover:-translate-y-0.5 hover:bg-tinta;
+  }
+  .btn-watermelon {
+    @apply btn bg-watermelon text-tinta hover:-translate-y-0.5 hover:bg-tinta hover:text-crema;
+  }
+  .btn-outline {
+    @apply btn border-[1.5px] border-tinta text-tinta hover:-translate-y-0.5 hover:bg-tinta hover:text-crema;
+  }
+  .btn-outline-light {
+    @apply btn border-[1.5px] border-crema text-crema hover:-translate-y-0.5 hover:bg-crema hover:text-cacao;
+  }
+
   .link-underline {
     background-image: linear-gradient(currentColor, currentColor);
-    background-size: 0% 1.5px;
+    background-size: 0% 2px;
     background-position: 0 100%;
     background-repeat: no-repeat;
-    transition: background-size 0.35s ease;
+    transition: background-size 0.3s ease;
   }
   .link-underline:hover,
   .link-underline[aria-current="page"] {
-    background-size: 100% 1.5px;
+    background-size: 100% 2px;
   }
+}
 
-  .btn-stone {
-    @apply inline-flex items-center justify-center gap-2 bg-stone px-7 py-3 font-display text-[11px] uppercase tracking-label text-white transition-colors duration-300 hover:bg-heading;
+@layer utilities {
+  /* Retícula visible: textura de la capa Laboratorio, siempre sobre oscuro */
+  .bg-lab-grid {
+    background-color: theme("colors.cacao");
+    background-image: linear-gradient(rgb(248 247 242 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(248 247 242 / 0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
-
-  .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 border border-heading/70 px-7 py-3 font-display text-[11px] uppercase tracking-label text-heading transition-colors duration-300 hover:bg-heading hover:text-white;
+  /* Rayado diagonal (marcador de foto del manual) */
+  .bg-stripes {
+    background-image: repeating-linear-gradient(-45deg, rgb(20 20 20 / 0.06) 0 1px, transparent 1px 10px);
   }
 }
 
 /* Aparición suave al hacer scroll (ver components/site/Reveal.jsx) */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(16px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .reveal.is-visible {
@@ -91,28 +120,7 @@
   transform: none;
 }
 
-/* Garabatos: se dibujan solos al entrar en pantalla */
-.doodle-draw path {
-  stroke-dasharray: var(--len, 300);
-  stroke-dashoffset: var(--len, 300);
-}
-.is-visible .doodle-draw path,
-.doodle-draw.is-drawn path {
-  animation: draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  animation-delay: var(--draw-delay, 250ms);
-}
-
-/* Revelado de fotos con cortina */
-.reveal-img {
-  clip-path: inset(12% 0 0 0);
-  transition: clip-path 1.1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.is-visible .reveal-img,
-.is-visible.reveal-img {
-  clip-path: inset(0 0 0 0);
-}
-
-/* Barra de progreso del carrusel: se pausa al pasar el mouse */
+/* Barra de progreso del carrusel (se pausa al pasar el mouse) */
 .progress-bar {
   transform-origin: left;
   animation: progress var(--duration, 7000ms) linear forwards;
@@ -123,32 +131,35 @@
 
 /* Transición entre páginas */
 .page-enter {
-  animation: pageIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pageIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @keyframes pageIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(28px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-28px); }
-  to { opacity: 1; transform: none; }
-}
-
-/* Papel cuadriculado (como los fondos de sus posteos) */
-.bg-grid-paper {
-  background-color: #ECE8E0;
-  background-image: linear-gradient(rgb(66 64 59 / 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(66 64 59 / 0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -1,43 +1,43 @@
 /** @type {import('tailwindcss').Config} */
 
-// Paleta tomada del sitio actual de CoFi Lab (Pixieset), con algún ajuste de contraste.
-const colors = {
-  paper: "#F9F8F6", // fondo general
-  sand: "#EAE9E5", // paneles (testimonios, nosotras, contacto)
-  ink: "#373737", // texto principal
-  heading: "#42403B", // títulos
-  muted: "#7D7973", // texto secundario (más contraste que el #97938E original)
-  stone: "#97938E", // botones y detalles
-  line: "#DAD8D2", // bordes finos
-  bordo: "#7A3418", // color protagonista de su Instagram (títulos y bandas)
-  rojo: "#D4483A", // corazones y frutillas
-  rosa: "#E3A7AE", // florcitas de vichy
-  amarillo: "#F2BC5A", // mariposa y estrellas
-  celeste: "#5B8BD0", // detalles de la mariposa (uso mínimo)
-  azul: "#5B8BD0", // alias de compatibilidad
-  night: "#2B2925" // fondo oscuro cálido (footer, panel de contacto)
+// Paleta del Brand Book v1.0 de CoFi (2026).
+// Proporción de uso: crema 40% · cacao 15% · periwinkle 20% · lemon 10% · watermelon 6% · cantaloupe resto.
+const brand = {
+  periwinkle: "#AFC5FF", // principal: fondo protagonista
+  watermelon: "#FD5959", // acento: logo, formas y llamados a la acción. Nunca como fondo
+  lemon: "#FCFF82", // secundario: fondos de apoyo y datos sobre oscuro
+  cantaloupe: "#FF9C6D", // apoyo: calidez, une el rojo con el amarillo
+  tinta: "#141414", // solo texto
+  cacao: "#5C5148", // fondos oscuros
+  piedra: "#8A8A85",
+  arena: "#EFEDE4",
+  crema: "#F8F7F2"
 };
 
 module.exports = {
   content: ["./app/**/*.{js,jsx}", "./components/**/*.{js,jsx}", "./lib/**/*.{js,jsx}"],
   theme: {
     extend: {
-      colors: { cofi: colors, ...colors },
-      fontFamily: {
-        sans: ["var(--font-raleway)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-poppins)", "ui-sans-serif", "system-ui", "sans-serif"],
-        hand: ["var(--font-hand)", "cursive"]
+      colors: {
+        ...brand,
+        // alias usados por el admin
+        paper: brand.crema,
+        ink: brand.tinta,
+        heading: brand.tinta,
+        muted: "#5F5E59",
+        line: "#DCD9CE"
       },
-      letterSpacing: {
-        label: "0.19em"
+      fontFamily: {
+        sans: ["var(--font-poppins)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-poppins)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-space-mono)", "ui-monospace", "monospace"]
       },
       maxWidth: {
-        site: "78rem",
-        text: "46rem"
+        site: "80rem"
       },
       keyframes: {
         fadeInUp: {
-          "0%": { opacity: "0", transform: "translateY(18px)" },
+          "0%": { opacity: "0", transform: "translateY(16px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
         },
         fadeIn: {
@@ -52,27 +52,20 @@ module.exports = {
           "0%": { transform: "scaleX(0)" },
           "100%": { transform: "scaleX(1)" }
         },
-        wiggle: {
-          "0%, 100%": { transform: "rotate(0deg)" },
-          "30%": { transform: "rotate(-6deg)" },
-          "60%": { transform: "rotate(4deg)" }
+        spinSlow: {
+          to: { transform: "rotate(360deg)" }
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0) rotate(var(--r, 0deg))" },
-          "50%": { transform: "translateY(-6px) rotate(var(--r, 0deg))" }
-        },
-        draw: {
-          "0%": { strokeDashoffset: "var(--len, 300)" },
-          "100%": { strokeDashoffset: "0" }
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.25" }
         }
       },
       animation: {
         "fade-in-up": "fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both",
         "fade-in": "fadeIn 0.4s ease both",
-        marquee: "marquee 38s linear infinite",
-        wiggle: "wiggle 0.6s ease-in-out",
-        float: "float 5s ease-in-out infinite",
-        draw: "draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) both"
+        marquee: "marquee 40s linear infinite",
+        "spin-slow": "spinSlow 24s linear infinite",
+        blink: "blink 1.6s ease-in-out infinite"
       }
     }
   },

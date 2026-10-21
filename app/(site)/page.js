@@ -1,57 +1,84 @@
 import Image from "next/image";
 import Link from "next/link";
-import { home, services } from "@/config/content";
+import { ArrowUpRight } from "lucide-react";
+import { differentiators, home, positioning, services } from "@/config/content";
 import { site } from "@/config/site";
 import { Paragraphs } from "@/lib/emphasis";
 import { legacyImage } from "@/lib/legacy";
-import { getPublicTestimonials } from "@/lib/server/content";
+import { getPublicProjects, getPublicTestimonials } from "@/lib/server/content";
+import { SectionLabel, Shape, StageTag, toneClass } from "@/components/site/Brand";
 import { Reveal } from "@/components/site/Reveal";
-import { SplitSlider } from "@/components/site/SplitSlider";
-import { InstagramCta } from "@/components/site/InstagramCta";
-import { Squiggle } from "@/components/site/Doodles";
-import { GinghamFlower, PaperHeart, Star, TornEdge, WashiTape } from "@/components/site/Stickers";
+import { ServiceIcon } from "@/components/site/ServiceIcon";
+import { Testimonials } from "@/components/site/Testimonials";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const testimonials = await getPublicTestimonials();
+  const [testimonials, projects] = await Promise.all([getPublicTestimonials(), getPublicProjects()]);
 
   return (
     <>
-      {/* Presentación */}
-      <section className="container-site pb-16 pt-10 lg:pb-24 lg:pt-16">
-        <Reveal className="relative mx-auto max-w-[62rem]">
-          <p className="mb-4 flex items-center gap-3 font-hand text-[24px] text-bordo">
-            {site.fullName}
+      {/* ── Hero · capa Pop ───────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-periwinkle">
+        <Shape type="chispa" color="watermelon" className="absolute -right-10 top-6 h-40 w-40 sm:right-[6%] sm:top-10 sm:h-56 sm:w-56 lg:h-72 lg:w-72" />
+        <div className="container-site relative pb-20 pt-10 sm:pt-14 lg:pb-28 lg:pt-20">
+          <p className="flex animate-fade-in-up items-center gap-3 font-mono text-[13px]">
+            <span className="h-2.5 w-2.5 animate-blink rounded-full bg-watermelon" aria-hidden="true" />
+            {site.instagram.handle} · {home.label}
           </p>
-          <h1 className="text-balance font-display text-[30px] font-semibold leading-[1.15] sm:text-[40px] lg:text-[48px]">
-            Ideas que se prueban.
-            <br />
-            Marcas que se{" "}
-            <span className="relative inline-block whitespace-nowrap">
-              construyen
-              <Squiggle className="absolute -bottom-3 left-0 h-4 w-full" />
-            </span>
+          <h1 className="title-pop mt-6 max-w-[15ch] animate-fade-in-up text-[52px] [animation-delay:80ms] sm:text-[84px] lg:text-[112px]">
+            Ideas que se prueban. Marcas que se construyen.
           </h1>
-          <div className="mt-10 max-w-[52rem] space-y-4 text-[15px] leading-[1.9] text-ink sm:text-base">
-            <Paragraphs text={home.intro} />
+          <p className="mt-8 max-w-[36rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:160ms] sm:text-[19px]">{site.pitch}</p>
+          <div className="mt-10 flex animate-fade-in-up flex-wrap gap-3 [animation-delay:240ms]">
+            <Link href="/contacto" className="btn-cacao">
+              Contanos tu idea
+            </Link>
+            <Link href="/clientes" className="btn-outline">
+              Ver clientes
+            </Link>
           </div>
-        </Reveal>
+        </div>
 
-        <div className="relative mx-auto mt-14 grid max-w-[62rem] grid-cols-2 gap-3 sm:gap-5 lg:mt-20 lg:grid-cols-4">
-          <p className="absolute -top-10 right-2 hidden font-hand text-[20px] text-bordo sm:block">un poquito de nuestro día a día</p>
-          {home.photos.map((photo, index) => (
-            <Reveal
-              key={photo.src}
-              delay={index * 110}
-              className="reveal-img group relative aspect-square overflow-hidden rounded-[18px] bg-sand transition-transform duration-500 hover:z-10 hover:-translate-y-1.5 hover:rotate-[-1.5deg] even:hover:rotate-[1.5deg]"
+        {/* Franja de bloques de color */}
+        <nav aria-label="Qué hacemos" className="relative grid grid-cols-2 sm:grid-cols-4">
+          {home.strip.map((block) => (
+            <Link
+              key={block.label}
+              href={block.href}
+              className={cn(
+                "group flex items-center justify-between px-5 py-5 font-display text-[16px] font-bold transition-[padding] duration-300 hover:pb-8 sm:px-8 sm:py-6",
+                toneClass(block.tone)
+              )}
             >
+              {block.label}
+              <ArrowUpRight className="h-5 w-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" strokeWidth={2} aria-hidden="true" />
+            </Link>
+          ))}
+        </nav>
+      </section>
+
+      {/* ── Qué hacemos ───────────────────────────────────────────────── */}
+      <section className="container-site py-20 lg:py-28">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+          <Reveal>
+            <SectionLabel number="01">Laboratorio creativo</SectionLabel>
+            <h2 className="title-pop mt-3 text-[40px] sm:text-[56px]">Un equipo cercano que se suma al tuyo.</h2>
+          </Reveal>
+          <Reveal delay={100} className="space-y-4 text-[17px] leading-relaxed">
+            <Paragraphs text={home.intro} />
+          </Reveal>
+        </div>
+
+        <div className="mt-14 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {home.photos.map((photo, index) => (
+            <Reveal key={photo.src} delay={index * 90} className="group relative aspect-[4/5] overflow-hidden bg-arena">
               <Image
                 src={legacyImage(photo.src)}
                 alt={photo.alt}
                 fill
-                sizes="(min-width: 1024px) 240px, 45vw"
-                priority={index < 2}
+                sizes="(min-width: 1024px) 25vw, 50vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
             </Reveal>
@@ -59,116 +86,163 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Un año de CoFi (datos de su posteo aniversario) */}
-      <section aria-labelledby="un-ano" className="relative">
-        <TornEdge className="text-[#ECE8E0]" />
-        <div className="bg-grid-paper relative overflow-hidden py-20 lg:py-28">
-          <GinghamFlower className="absolute left-[4%] top-10 h-16 w-16 animate-float sm:h-20 sm:w-20" rotate={-14} />
-          <PaperHeart className="absolute right-[6%] top-14 h-14 w-14 animate-float [animation-delay:0.8s]" rotate={12} />
-          <Star className="absolute bottom-12 right-[12%] h-12 w-12 animate-float [animation-delay:1.4s]" rotate={8} />
-          <div className="container-site relative">
-            <Reveal className="mx-auto max-w-[62rem] text-center">
-              <p className="font-hand text-[26px] text-bordo">primer aniversario ✦</p>
-              <h2 id="un-ano" className="mt-2 font-display text-[30px] font-bold uppercase leading-tight text-bordo sm:text-[40px]">
-                1 año haciendo lo que nos gusta
+      {/* ── Servicios ─────────────────────────────────────────────────── */}
+      <section id="servicios" aria-labelledby="servicios-titulo" className="scroll-mt-20 bg-arena py-20 lg:py-28">
+        <div className="container-site">
+          <Reveal className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <SectionLabel number="02">Servicios</SectionLabel>
+              <h2 id="servicios-titulo" className="title-pop mt-3 text-[40px] sm:text-[56px]">
+                Lo que hacemos
               </h2>
-            </Reveal>
-            <div className="mx-auto mt-14 grid max-w-[62rem] grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-              {home.stats.map((stat, index) => (
-                <Reveal
-                  key={stat.label}
-                  delay={index * 110}
-                  className="relative rounded-[18px] border border-bordo/25 bg-paper/80 px-5 pb-6 pt-8 text-center shadow-[0_18px_40px_-30px_rgb(122_52_24/0.6)] transition-transform duration-500 hover:-translate-y-1 hover:rotate-[-1deg] even:hover:rotate-[1deg]"
-                >
-                  <WashiTape className="-top-3 left-1/2 -translate-x-1/2" rotate={index % 2 ? 3 : -3} />
-                  <p className="font-display text-[34px] font-bold leading-none text-bordo sm:text-[42px]">{stat.value}</p>
-                  <p className="mt-3 font-display text-[12px] font-semibold uppercase tracking-[0.12em] text-bordo/90">{stat.label}</p>
-                  <p className="mt-2 font-hand text-[18px] leading-snug text-ink/70">{stat.note}</p>
-                </Reveal>
-              ))}
             </div>
-          </div>
-        </div>
-        <TornEdge className="text-[#ECE8E0]" flip />
-      </section>
+            <p className="max-w-[26rem] text-[17px]">Estrategia, creatividad y producción audiovisual en un mismo equipo.</p>
+          </Reveal>
 
-      {/* Servicios: tarjetas de papel sobre bordó, como sus posteos */}
-      <section aria-labelledby="servicios" className="relative -mt-px">
-        <TornEdge className="text-bordo" />
-        <div className="bg-bordo py-20 text-paper lg:py-28">
-          <div className="container-site">
-            <Reveal className="mx-auto flex max-w-[72rem] flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <p className="font-hand text-[24px] text-[#E3A7AE]">lo que hacemos</p>
-                <h2 id="servicios" className="mt-1 font-display text-[34px] font-bold uppercase leading-none text-paper sm:text-[48px]">
-                  Nuestros servicios
-                </h2>
-              </div>
-              <p className="max-w-[26rem] text-[15px] leading-relaxed text-paper/75">
-                Estrategia, creatividad y producción audiovisual para que cada marca tenga una comunicación con identidad y dirección.
-              </p>
-            </Reveal>
-
-            <div className="mx-auto mt-14 grid max-w-[72rem] gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 lg:gap-6">
-              {services.map((service, index) => (
-                <Reveal
-                  key={service.number}
-                  delay={(index % 3) * 100}
-                  className={`group relative flex flex-col rounded-[6px] bg-[#F3EEE6] p-7 text-ink shadow-[0_24px_40px_-28px_rgb(0_0_0/0.6)] transition-transform duration-500 hover:-translate-y-1.5 hover:rotate-0 sm:p-8 ${
-                    index % 2 ? "lg:rotate-[0.6deg]" : "lg:rotate-[-0.6deg]"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <span className="font-display text-[44px] font-bold leading-none text-bordo/90 transition-colors group-hover:text-bordo">
-                      {service.number}
-                    </span>
-                    <span className="mt-3 h-px flex-1 bg-bordo/20" aria-hidden="true" />
+          <ul className="mt-12 border-t-[1.5px] border-tinta">
+            {services.map((service, index) => (
+              <Reveal as="li" key={service.number} delay={index * 60} className="group border-b-[1.5px] border-tinta">
+                <div className="relative grid gap-4 overflow-hidden py-7 sm:grid-cols-[4rem_1fr] lg:grid-cols-[4rem_1.1fr_1fr_3rem] lg:items-start lg:gap-8 lg:py-9">
+                  {/* Bloque de color que entra al pasar el mouse */}
+                  <span
+                    className={cn(
+                      "absolute inset-0 -z-0 origin-left scale-x-0 transition-transform duration-500 ease-out group-hover:scale-x-100",
+                      toneClass(service.tone)
+                    )}
+                    aria-hidden="true"
+                  />
+                  <span className="relative font-mono text-[15px] text-watermelon transition-colors group-hover:text-tinta lg:pl-2">{service.number}</span>
+                  <div className="relative">
+                    <h3 className="font-display text-[26px] font-bold leading-tight sm:text-[32px]">{service.title}</h3>
+                    <p className="mt-2 text-[17px]">{service.lead}</p>
                   </div>
-                  <h3 className="mt-5 font-display text-[19px] font-semibold uppercase leading-tight text-bordo">{service.title}</h3>
-                  <p className="mt-3 font-hand text-[21px] leading-snug text-heading">{service.lead}</p>
-                  <ul className="mt-5 space-y-2 border-t border-bordo/15 pt-5 text-[14.5px] leading-snug text-ink">
+                  <ul className="relative space-y-1.5 text-[15px] sm:col-start-2 lg:col-start-auto">
                     {service.items.map((item) => (
-                      <li key={item} className="flex gap-3">
-                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-bordo/60" aria-hidden="true" />
-                        {item.replace(/[.,]$/, "")}
+                      <li key={item} className="flex gap-2.5">
+                        <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-tinta" aria-hidden="true" />
+                        {item}
                       </li>
                     ))}
                   </ul>
-                </Reveal>
-              ))}
-            </div>
-
-            <div className="mt-16 text-center">
-              <Link
-                href="/contacto"
-                className="group relative inline-flex items-center gap-4 overflow-hidden rounded-full bg-paper py-4 pl-8 pr-4 font-display text-[11px] uppercase tracking-label text-bordo"
-              >
-                <span className="absolute inset-0 translate-y-full bg-[#E3A7AE] transition-transform duration-500 ease-out group-hover:translate-y-0" aria-hidden="true" />
-                <span className="relative">Contanos tu idea</span>
-                <span className="relative grid h-8 w-8 place-items-center rounded-full bg-bordo text-paper transition-transform duration-500 group-hover:rotate-[-35deg]">→</span>
-              </Link>
-            </div>
-          </div>
+                  <ServiceIcon name={service.icon} className="relative hidden h-8 w-8 lg:block" />
+                </div>
+              </Reveal>
+            ))}
+          </ul>
         </div>
-        <TornEdge className="text-bordo" flip />
       </section>
 
-      {/* Testimonios */}
-      {testimonials.length ? (
-        <SplitSlider
-          eyebrow="Testimonios"
-          slides={testimonials.map((item) => ({
-            id: item.id,
-            title: item.authorName,
-            subtitle: item.company,
-            body: [`“${item.quote}”`],
-            image: item.imageUrl,
-            imageAlt: item.company ? `Trabajo para ${item.company}` : ""
-          }))}
-        />
-      ) : null}
+      {/* ── Posicionamiento · capa Laboratorio ────────────────────────── */}
+      <section className="bg-lab-grid relative overflow-hidden py-20 text-crema lg:py-28">
+        <Shape type="flor" color="cantaloupe" className="absolute -bottom-20 -left-20 h-56 w-56" />
+        <div className="container-site relative">
+          <Reveal>
+            <SectionLabel number="03" tone="lemon">
+              Por qué CoFi
+            </SectionLabel>
+            <p className="title-pop mt-5 max-w-[22ch] text-[32px] leading-[1.08] text-crema sm:text-[44px] lg:text-[52px]">{positioning.text}</p>
+            <div className="mt-8 flex flex-wrap gap-2">
+              {positioning.tags.map((tag) => (
+                <StageTag key={tag.label} tone={tag.tone}>
+                  {tag.label}
+                </StageTag>
+              ))}
+            </div>
+          </Reveal>
 
-      <InstagramCta handle={site.instagram.handle} url={site.instagram.url} />
+          <div className="mt-16 grid gap-px bg-crema/15 sm:grid-cols-2 lg:grid-cols-4">
+            {differentiators.map((item, index) => (
+              <Reveal key={item.number} delay={index * 90} className="bg-cacao p-7 transition-colors duration-300 hover:bg-[#665a50]">
+                <p className="font-mono text-[14px] text-watermelon">{item.number}</p>
+                <h3 className="mt-4 font-display text-[22px] font-bold text-crema">{item.title}</h3>
+                <p className="mt-2 text-[15px] text-crema/75">{item.text}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Un año en números ─────────────────────────────────────────── */}
+      <section className="container-site py-20 lg:py-28">
+        <Reveal className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <SectionLabel number="04">Primer aniversario</SectionLabel>
+            <h2 className="title-pop mt-3 text-[40px] sm:text-[56px]">1 año haciendo lo que nos gusta.</h2>
+          </div>
+        </Reveal>
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {home.stats.map((stat, index) => (
+            <Reveal
+              key={stat.label}
+              delay={index * 90}
+              className={cn(
+                "flex min-h-[200px] flex-col justify-between p-6 transition-transform duration-300 hover:-translate-y-1 sm:min-h-[240px] sm:p-7",
+                toneClass(stat.tone),
+                stat.tone === "crema" && "border-[1.5px] border-tinta"
+              )}
+            >
+              <p className="mono-label uppercase">{stat.label}</p>
+              <div>
+                <p className="title-pop text-[44px] sm:text-[60px]">{stat.value}</p>
+                <p className="mt-2 text-[14px] sm:text-[15px]">{stat.note}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Clientes (adelanto) ───────────────────────────────────────── */}
+      <section className="bg-crema pb-4">
+        <div className="container-site">
+          <Reveal className="flex flex-wrap items-end justify-between gap-6 border-t-[1.5px] border-tinta pt-10">
+            <div>
+              <SectionLabel>Clientes</SectionLabel>
+              <h2 className="title-pop mt-3 text-[32px] sm:text-[44px]">Marcas que nos dejaron ser parte.</h2>
+            </div>
+            <Link href="/clientes" className="btn-outline">
+              Ver todos los casos
+            </Link>
+          </Reveal>
+          <div className="-mx-5 mt-10 flex snap-x snap-mandatory scroll-pl-5 gap-4 overflow-x-auto px-5 pb-6 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-6">
+            {projects.map((project, index) => (
+              <Link key={project.id} href={`/clientes/${project.slug}`} className="group w-[44%] shrink-0 snap-start sm:w-auto">
+                <span className="relative block aspect-[3/4] overflow-hidden bg-arena">
+                  {project.coverUrl ? (
+                    <Image src={project.coverUrl} alt={project.clientName} fill sizes="(min-width: 1024px) 16vw, 45vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : null}
+                  <span
+                    className={cn(
+                      "absolute inset-x-0 bottom-0 translate-y-full px-3 py-2 font-mono text-[12px] uppercase transition-transform duration-300 group-hover:translate-y-0",
+                      toneClass(["lemon", "periwinkle", "cantaloupe"][index % 3])
+                    )}
+                  >
+                    Ver caso →
+                  </span>
+                </span>
+                <span className="mt-3 block font-display text-[16px] font-bold">{project.clientName}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Testimonios ───────────────────────────────────────────────── */}
+      {testimonials.length ? <Testimonials items={testimonials} /> : null}
+
+      {/* ── Llamado final ─────────────────────────────────────────────── */}
+      <section className="relative grid overflow-hidden md:grid-cols-[1.6fr_1fr]">
+        <div className="bg-periwinkle px-5 py-16 sm:px-12 lg:px-16 lg:py-24">
+          <Reveal>
+            <h2 className="title-pop max-w-[14ch] text-[40px] sm:text-[60px]">Para comunicar, no solo para publicar.</h2>
+            <Link href="/contacto" className="btn-cacao mt-10">
+              Contanos tu idea
+            </Link>
+          </Reveal>
+        </div>
+        <div className="relative grid min-h-[220px] place-items-center bg-lemon">
+          <Shape type="flor" color="watermelon" spin className="h-40 w-40 sm:h-52 sm:w-52" />
+        </div>
+      </section>
     </>
   );
 }
