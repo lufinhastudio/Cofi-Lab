@@ -31,7 +31,7 @@ export default async function HomePage() {
           <h1 className="title-pop mt-6 max-w-[15ch] animate-fade-in-up text-[52px] [animation-delay:80ms] sm:text-[84px] lg:text-[112px]">
             Ideas que se prueban. Marcas que se construyen.
           </h1>
-          <p className="mt-8 max-w-[36rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:160ms] sm:text-[19px]">{site.pitch}</p>
+          <p className="mt-8 max-w-[54rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:160ms] sm:text-[19px]">{site.pitch}</p>
           <div className="mt-10 flex animate-fade-in-up flex-wrap gap-3 [animation-delay:240ms]">
             <Link href="/contacto" className="btn-cacao">
               Contanos tu idea
@@ -43,13 +43,13 @@ export default async function HomePage() {
         </div>
 
         {/* Franja de bloques de color */}
-        <nav aria-label="Qué hacemos" className="relative grid grid-cols-2 sm:grid-cols-4">
+        <nav aria-label="Qué hacemos" className="relative grid grid-cols-3">
           {home.strip.map((block) => (
             <Link
               key={block.label}
               href={block.href}
               className={cn(
-                "group flex items-center justify-between px-5 py-5 font-display text-[16px] font-bold transition-[padding] duration-300 hover:pb-8 sm:px-8 sm:py-6",
+                "group flex items-center justify-between px-4 py-5 font-display text-[15px] sm:text-[16px] font-bold transition-[padding] duration-300 hover:pb-8 sm:px-8 sm:py-6",
                 toneClass(block.tone)
               )}
             >
@@ -115,7 +115,7 @@ export default async function HomePage() {
                   <span className="relative font-mono text-[15px] text-watermelon transition-colors group-hover:text-tinta lg:pl-2">{service.number}</span>
                   <div className="relative">
                     <h3 className="font-display text-[26px] font-bold leading-tight sm:text-[32px]">{service.title}</h3>
-                    <p className="mt-2 text-[17px]">{service.lead}</p>
+                    <p className="mt-2 text-[17px] [text-wrap:balance]">{service.lead}</p>
                   </div>
                   <ul className="relative space-y-1.5 text-[15px] sm:col-start-2 lg:col-start-auto">
                     {service.items.map((item) => (
@@ -141,7 +141,7 @@ export default async function HomePage() {
             <SectionLabel number="03" tone="lemon">
               Por qué CoFi
             </SectionLabel>
-            <p className="title-pop mt-5 max-w-[22ch] text-[32px] leading-[1.08] text-crema sm:text-[44px] lg:text-[52px]">{positioning.text}</p>
+            <p className="title-pop mt-5 max-w-[34ch] text-[26px] leading-[1.2] text-crema [text-wrap:pretty] sm:text-[34px] lg:text-[40px]">{positioning.text}</p>
             <div className="mt-8 flex flex-wrap gap-2">
               {positioning.tags.map((tag) => (
                 <StageTag key={tag.label} tone={tag.tone}>

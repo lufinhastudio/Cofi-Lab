@@ -14,8 +14,7 @@ export const home = {
   strip: [
     { label: "Contenido", href: "/#servicios", tone: "arena" },
     { label: "Estrategia", href: "/#servicios", tone: "lemon" },
-    { label: "Redes", href: "/#servicios", tone: "cantaloupe" },
-    { label: "Paid", href: "/#servicios", tone: "cacao" }
+    { label: "Redes", href: "/#servicios", tone: "cantaloupe" }
   ],
   // Datos de su posteo de primer aniversario
   stats: [
@@ -98,8 +97,8 @@ export const services = [
 
 // Diferenciadores (11 — Mensajes clave)
 export const differentiators = [
-  { number: "01", title: "Integral sin burocracia", text: "Un equipo, un interlocutor." },
-  { number: "02", title: "Red de aliados", text: "Equipos expertos de confianza para web y pauta." },
+  { number: "01", title: "Servicio integral", text: "Un equipo, un interlocutor." },
+  { number: "02", title: "Red de aliados", text: "Equipos expertos de confianza para desarrollo web y paid media." },
   { number: "03", title: "Estética propia", text: "Nada de plantillas." },
   { number: "04", title: "Orden creativo", text: "Método, calendario y seguimiento." }
 ];
