@@ -7,6 +7,7 @@ import { Paragraphs } from "@/lib/emphasis";
 import { legacyImage } from "@/lib/legacy";
 import { getPublicProjects, getPublicTestimonials } from "@/lib/server/content";
 import { SectionLabel, Shape, StageTag, toneClass } from "@/components/site/Brand";
+import { CountUp } from "@/components/site/CountUp";
 import { Reveal } from "@/components/site/Reveal";
 import { ServiceIcon } from "@/components/site/ServiceIcon";
 import { Testimonials } from "@/components/site/Testimonials";
@@ -183,7 +184,9 @@ export default async function HomePage() {
             >
               <p className="mono-label uppercase">{stat.label}</p>
               <div>
-                <p className="title-pop text-[44px] sm:text-[60px]">{stat.value}</p>
+                <p className="title-pop text-[44px] sm:text-[60px]">
+                  <CountUp value={stat.value} delay={150 + index * 120} />
+                </p>
                 <p className="mt-2 text-[14px] sm:text-[15px]">{stat.note}</p>
               </div>
             </Reveal>
