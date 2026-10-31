@@ -10,7 +10,7 @@ export function VideoCard({ title, url, image, index = 0 }) {
         {image ? (
           <Image src={image} alt={title} fill sizes="(min-width: 768px) 30vw, 72vw" className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
         ) : null}
-        <span className={`stage-tag absolute left-0 top-0 ${tags[index % tags.length]}`}>EXP_{String(index + 1).padStart(3, "0")}</span>
+        <span className={`stage-tag absolute left-0 top-0 ${tags[index % tags.length]}`}>{String(index + 1).padStart(3, "0")}</span>
         <span
           className="absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-watermelon text-tinta transition-transform duration-500 group-hover:scale-110"
           aria-hidden="true"
