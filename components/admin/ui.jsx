@@ -60,7 +60,9 @@ export function PageHeader({ eyebrow, title, description, actions, children }) {
 
 export function Field({ label, help, error, required, children, htmlFor, className }) {
   return (
-    <div className={cn("grid gap-1.5", className)}>
+    // content-start: si el campo de al lado es más alto (por el texto de ayuda),
+    // la etiqueta y la caja quedan arriba y alineadas, sin repartir el espacio sobrante.
+    <div className={cn("grid content-start gap-1.5", className)}>
       {label ? (
         <label htmlFor={htmlFor} className="text-[14px] font-semibold text-tinta">
           {label}
