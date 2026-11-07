@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, BookOpen, Briefcase, FileText, Inbox, MessageSquareQuote, Plus, Settings } from "lucide-react";
+import { AlertTriangle, ArrowRight, Briefcase, FileText, Mail, MessageSquareQuote, Plus, Settings } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { PROJECT_STATUS, STATUS_TONE } from "@/lib/content/options";
 import { requireAdminPage } from "@/lib/server/admin";
 import { getDashboardStats } from "@/lib/server/collections";
+import { getContactEmailStatus } from "@/lib/server/email";
 
 export const metadata = { title: { absolute: "Dashboard · Panel CoFi" } };
 
@@ -21,8 +22,6 @@ const quickLinks = [
   { href: "/admin/marcas", label: "Marcas y trabajos", text: "Campañas, galerías y reels", icon: Briefcase },
   { href: "/admin/contenido", label: "Contenido del sitio", text: "Inicio, Clientes, Nosotras, Contacto", icon: FileText },
   { href: "/admin/testimonios", label: "Testimonios", text: "Lo que dicen las marcas", icon: MessageSquareQuote },
-  { href: "/admin/cofiteca", label: "La Cofiteca", text: "Libros, juegos y productos", icon: BookOpen },
-  { href: "/admin/mensajes", label: "Mensajes", text: "Consultas del formulario", icon: Inbox },
   { href: "/admin/configuracion", label: "Configuración", text: "Redes, contacto y pie", icon: Settings }
 ];
 
@@ -36,6 +35,7 @@ export default async function AdminHomePage() {
     if (error?.code === "42P01" || error?.code === "42703") migrationMissing = true;
     else throw error;
   }
+  const contactEmail = await getContactEmailStatus();
   const firstName = String(session.user.name || "").split(" ")[0];
 
   return (
@@ -73,13 +73,7 @@ export default async function AdminHomePage() {
             />
             <Stat href="/admin/marcas" label="Fotos en galerías" value={stats.counts.images} note={`en ${stats.counts.sections} secciones`} tone="bg-lemon" />
             <Stat href="/admin/testimonios" label="Testimonios" value={stats.counts.testimonials_visible} note={`visibles de ${stats.counts.testimonials}`} tone="bg-cantaloupe" />
-            <Stat
-              href="/admin/mensajes"
-              label="Mensajes sin leer"
-              value={stats.counts.unread_messages}
-              note={`${stats.counts.messages} recibidos en total`}
-              tone={stats.counts.unread_messages ? "bg-watermelon" : "bg-white"}
-            />
+            <Stat href="/admin/marcas" label="Secciones" value={stats.counts.sections} note="campañas, galerías, reels y textos" />
           </div>
 
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
@@ -105,28 +99,19 @@ export default async function AdminHomePage() {
               </ul>
             </Card>
             <Card className="p-5 sm:p-6">
-              <div className="flex items-center justify-between">
-                <h2 className="font-display text-[18px] font-black">Últimos mensajes</h2>
-                <Link href="/admin/mensajes" className="text-[13px] font-semibold text-muted hover:text-tinta">
-                  Ver todos
-                </Link>
-              </div>
-              {stats.recentMessages.length ? (
-                <ul className="mt-4 divide-y divide-line">
-                  {stats.recentMessages.map((message) => (
-                    <li key={message.id}>
-                      <Link href="/admin/mensajes" className="flex items-start gap-3 py-3 hover:opacity-70">
-                        <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${message.read ? "bg-tinta/10" : "bg-watermelon"}`} aria-hidden="true" />
-                        <span className="min-w-0">
-                          <span className="block truncate font-semibold">{message.name}</span>
-                          <span className="block truncate text-[13px] text-muted">{message.message || message.email}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+              <h2 className="flex items-center gap-2 font-display text-[18px] font-black">
+                <Mail className="h-5 w-5" aria-hidden="true" /> Formulario de contacto
+              </h2>
+              {contactEmail.configured ? (
+                <p className="mt-4 text-[14px] leading-relaxed">
+                  Las consultas de la web llegan por email a <strong className="[overflow-wrap:anywhere]">{contactEmail.to}</strong>. Para responder, alcanza con
+                  contestar ese email.
+                </p>
               ) : (
-                <p className="mt-4 text-[14px] text-muted">Todavía no llegaron mensajes.</p>
+                <p className="mt-4 rounded-xl bg-lemon/70 p-3 text-[14px] leading-relaxed">
+                  <strong>Todavía no se envían por email.</strong> Falta configurar Resend en el servidor (variables <code>RESEND_API_KEY</code> y{" "}
+                  <code>CONTACT_EMAIL_TO</code>). Mientras tanto las consultas se guardan en la base como respaldo.
+                </p>
               )}
             </Card>
           </div>

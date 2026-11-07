@@ -9,12 +9,17 @@ import { Button, Modal, MoveButtons, moveItem, TextInput, useDragSort, useToast 
 const ACCEPT = "image/jpeg,image/png,image/webp";
 
 // Miniatura optimizada por Cloudinary para el panel (no se baja la foto completa).
+// Usa los mismos anchos y el mismo formato de URL que la web (next.config.mjs +
+// lib/imageLoader.js): así reutiliza las variantes ya generadas y no crea
+// transformaciones nuevas en Cloudinary.
+const SHARED_WIDTHS = [256, 384, 640, 960, 1280, 1600, 1920];
 export function thumb(url, width = 480) {
   if (!url) return "";
   const marker = "/image/upload/";
   if (url.includes("res.cloudinary.com") && url.includes(marker)) {
     const [base, rest] = url.split(marker);
-    return `${base}${marker}f_auto,q_auto,c_limit,w_${width}/${rest}`;
+    const snapped = SHARED_WIDTHS.find((size) => size >= width) || SHARED_WIDTHS.at(-1);
+    return `${base}${marker}f_auto,q_auto,c_limit,w_${snapped}/${rest}`;
   }
   return url;
 }

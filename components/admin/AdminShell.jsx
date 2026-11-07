@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BookOpen, Briefcase, ExternalLink, FileText, Inbox, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Settings, X } from "lucide-react";
+import { Briefcase, ExternalLink, FileText, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Settings, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminProviders } from "./ui";
 
@@ -13,12 +13,10 @@ const NAV = [
   { href: "/admin/marcas", label: "Marcas y trabajos", icon: Briefcase },
   { href: "/admin/contenido", label: "Contenido del sitio", icon: FileText },
   { href: "/admin/testimonios", label: "Testimonios", icon: MessageSquareQuote },
-  { href: "/admin/cofiteca", label: "La Cofiteca", icon: BookOpen },
-  { href: "/admin/mensajes", label: "Mensajes recibidos", icon: Inbox, badge: "unread" },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings }
 ];
 
-export function AdminShell({ user, unread = 0, children }) {
+export function AdminShell({ user, children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -56,9 +54,6 @@ export function AdminShell({ user, unread = 0, children }) {
               >
                 <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} aria-hidden="true" />
                 <span className="flex-1">{item.label}</span>
-                {item.badge === "unread" && unread > 0 ? (
-                  <span className="rounded-full bg-watermelon px-2 py-0.5 text-[11px] font-bold text-tinta">{unread}</span>
-                ) : null}
               </Link>
             </li>
           );
@@ -107,7 +102,6 @@ export function AdminShell({ user, unread = 0, children }) {
           {brand}
           <button type="button" onClick={() => setOpen(true)} className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-crema/10" aria-label="Abrir menú" aria-expanded={open}>
             <Menu className="h-5 w-5" aria-hidden="true" />
-            {unread > 0 ? <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-watermelon" aria-hidden="true" /> : null}
           </button>
         </div>
         {open ? (

@@ -1,10 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowIcon, CloseIcon } from "./icons";
 
 // Visor a pantalla completa: flechas del teclado, Esc para cerrar y swipe.
+// Se monta directo en <body> (portal): dentro de la página quedaba atrapado en
+// los bloques animados con transform y la foto se dibujaba fuera de pantalla.
 export function Lightbox({ images, index, onClose, onChange }) {
   const total = images.length;
 
@@ -24,8 +27,9 @@ export function Lightbox({ images, index, onClose, onChange }) {
 
   const touchStart = useRef(null);
   const image = images[index];
+  const [loaded, setLoaded] = useState("");
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -41,7 +45,21 @@ export function Lightbox({ images, index, onClose, onChange }) {
       }}
     >
       <div className="relative h-[82vh] w-[92vw]" onClick={(event) => event.stopPropagation()}>
-        <Image key={image.url} src={image.url} alt={image.alt || ""} fill sizes="92vw" className="animate-fade-in object-contain" />
+        {loaded !== image.url ? (
+          <span className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full border-2 border-white/25 border-t-white/80" aria-hidden="true" />
+        ) : null}
+        {/* Se pide con prioridad y al ancho que realmente ocupa (no más grande). */}
+        <Image
+          key={image.url}
+          src={image.url}
+          alt={image.alt || ""}
+          fill
+          loading="eager"
+          fetchPriority="high"
+          sizes="(min-width: 768px) 80vw, 92vw"
+          onLoad={() => setLoaded(image.url)}
+          className="animate-fade-in object-contain"
+        />
       </div>
 
       <button type="button" onClick={onClose} className="absolute right-4 top-4 p-3 text-white/80 hover:text-white" aria-label="Cerrar">
@@ -76,6 +94,7 @@ export function Lightbox({ images, index, onClose, onChange }) {
           </p>
         </>
       ) : null}
-    </div>
+    </div>,
+    document.body
   );
 }
