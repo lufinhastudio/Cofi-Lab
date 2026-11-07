@@ -82,7 +82,7 @@ export function ContentEditor({ areaKey, area, initial, updatedAt: initialUpdate
         ) : null}
       </PageHeader>
       <ErrorList messages={errors} className="mb-5" />
-      <SchemaForm fields={area.fields} value={value} onChange={setValue} />
+      <SchemaForm fields={area.fields} value={value} onChange={setValue} pageOrder={Boolean(area.path)} />
       <SaveBar dirty={dirty} saving={saving} onSave={save} onDiscard={() => setValue(saved)} savedAt={updatedAt}>
         {customized ? (
           <Button variant="ghost" size="sm" onClick={reset} disabled={saving}>
