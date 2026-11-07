@@ -18,11 +18,27 @@ export function Header({ settings = { instagramHandle: site.instagram.handle, in
   useEffect(() => setMounted(true), []);
   useEffect(() => setOpen(false), [pathname]);
 
+  // El header es sticky y al achicarse cambia de alto (16 px en celular, 32 px en
+  // computadora): eso corre el scroll y, con un solo umbral, lo volvía a cruzar y
+  // el header "temblaba" (sobre todo con trackpad, inercia o el rebote de iOS).
+  // Con dos umbrales separados más que ese corrimiento, nunca entra en loop:
+  // se achica pasados los 64 px y vuelve a su tamaño solo arriba del todo.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = window.scrollY;
+      setScrolled((current) => (current ? y > 4 : y > 64));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
