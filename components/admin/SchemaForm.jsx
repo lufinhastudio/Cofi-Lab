@@ -248,7 +248,9 @@ export function SchemaField({ field, value, onChange, className }) {
 }
 
 // Formulario completo con grupos en tarjetas.
-export function SchemaForm({ fields, value, onChange }) {
+// pageOrder: los grupos siguen el orden en que aparecen en la página pública;
+// se numeran y se muestra un índice para saltar a cada parte.
+export function SchemaForm({ fields, value, onChange, pageOrder = false }) {
   const groups = [];
   for (const field of fields) {
     const name = field.group || "";
@@ -256,10 +258,28 @@ export function SchemaForm({ fields, value, onChange }) {
     if (!group) groups.push((group = { name, fields: [] }));
     group.fields.push(field);
   }
+  const numbered = pageOrder && groups.length > 1;
+  const anchor = (index) => "parte-" + (index + 1);
   return (
     <div className="grid grid-cols-1 gap-5">
-      {groups.map((group) => (
-        <Card key={group.name || "general"} className="p-5 sm:p-6">
+      {numbered ? (
+        <nav aria-label="Partes de la página" className="rounded-2xl bg-periwinkle/40 p-4">
+          <p className="text-[13px] font-semibold">La página se arma en este orden, de arriba hacia abajo. Tocá una parte para ir a editarla:</p>
+          <ol className="mt-3 flex flex-wrap gap-2">
+            {groups.map((group, index) => (
+              <li key={group.name || index}>
+                <a href={"#" + anchor(index)} className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold transition-colors hover:bg-tinta hover:text-crema">
+                  <span className="font-mono text-[12px] text-[#c23434]">{String(index + 1).padStart(2, "0")}</span>
+                  {group.name}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      ) : null}
+      {groups.map((group, index) => (
+        <Card key={group.name || "general"} id={numbered ? anchor(index) : undefined} className="scroll-mt-24 p-5 sm:p-6">
+          {numbered ? <p className="mono-label mb-1.5 text-[#c23434]">{String(index + 1).padStart(2, "0")} · En la página</p> : null}
           {group.name ? <h2 className="mb-5 font-display text-[18px] font-black">{group.name}</h2> : null}
           <div className="grid grid-cols-1 gap-5">
             {group.fields.map((field) => (

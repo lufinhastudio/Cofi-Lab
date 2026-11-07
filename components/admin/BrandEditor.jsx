@@ -9,17 +9,36 @@ import { PROJECT_STATUS, SECTION_TEMPLATES, STATUS_TONE, templateById, templateF
 import { isValidSlug, slugify } from "@/lib/content/sanitize";
 import { cn } from "@/lib/utils";
 import { GalleryField, ImageField } from "./ImageFields";
-import { TagsInput } from "./SchemaForm";
 import { Badge, Button, Card, ErrorList, Field, Modal, MoveButtons, moveItem, SaveBar, TextArea, TextInput, Toggle, useConfirm, useDragSort, useToast, useUnsavedWarning } from "./ui";
 
 const newId = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 
+// Separa la descripción como la muestra la web: el primer párrafo va arriba,
+// junto al nombre («Presentación»), y el resto en el bloque «El trabajo».
+function splitSummary(summary) {
+  const parts = String(summary || "")
+    .split(/\n{2,}/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return { lead: parts[0] || "", work: parts.slice(1).join("\n\n") };
+}
+
 function toEditable(project) {
+  const sections = project.sections.map((section) => ({
+    id: section.id,
+    template: templateFor(section.kind, section.layout).id,
+    title: section.title,
+    description: section.description,
+    linkUrl: section.linkUrl,
+    media: section.media.map((item) => ({ url: item.url, alt: item.alt || "" })),
+    visible: section.visible
+  }));
   return {
     clientName: project.clientName,
     slug: project.slug,
     industry: project.industry,
-    summary: project.summary,
+    ...splitSummary(project.summary),
+    // No se muestran en la web (se sacaron en el rediseño), pero se conservan al guardar.
     services: project.services,
     coverUrl: project.coverUrl,
     videosHeading: project.videosHeading,
@@ -28,16 +47,15 @@ function toEditable(project) {
     instagramImageUrl: project.instagramImageUrl,
     featured: project.featured,
     status: project.status,
-    sections: project.sections.map((section) => ({
-      id: section.id,
-      template: templateFor(section.kind, section.layout).id,
-      title: section.title,
-      description: section.description,
-      linkUrl: section.linkUrl,
-      media: section.media.map((item) => ({ url: item.url, alt: item.alt || "" })),
-      visible: section.visible
-    }))
+    // La web muestra primero todos los reels y después galerías y textos:
+    // el editor usa el mismo orden.
+    sections: [...sections.filter((section) => section.template === "video"), ...sections.filter((section) => section.template !== "video")]
   };
+}
+
+function toPayload(value) {
+  const { lead, work, ...rest } = value;
+  return { ...rest, summary: [lead.trim(), work.trim()].filter(Boolean).join("\n\n") };
 }
 
 // Mini esquema visual de cada plantilla (para elegir sin saber de diseño).
@@ -190,6 +208,33 @@ function SectionCard({ section, index, total, expanded, onToggle, onChange, onMo
   );
 }
 
+// Bloques del editor en el mismo orden en que aparecen en la página de la marca.
+const PAGE_BLOCKS = [
+  { id: "bloque-encabezado", label: "Encabezado" },
+  { id: "bloque-reels", label: "Reels" },
+  { id: "bloque-trabajo", label: "El trabajo" },
+  { id: "bloque-galerias", label: "Galerías y textos" },
+  { id: "bloque-instagram", label: "Instagram" }
+];
+
+function BlockCard({ number, id, title, where, action, children }) {
+  return (
+    <Card id={id} className="scroll-mt-24 p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="mono-label text-[#c23434]">
+            {String(number).padStart(2, "0")} · En la página
+          </p>
+          <h2 className="mt-1.5 font-display text-[19px] font-black">{title}</h2>
+          {where ? <p className="mt-1 max-w-2xl text-[14px] text-muted">{where}</p> : null}
+        </div>
+        {action}
+      </div>
+      <div className="mt-5">{children}</div>
+    </Card>
+  );
+}
+
 export function BrandEditor({ initialProject }) {
   const router = useRouter();
   const toast = useToast();
@@ -206,21 +251,28 @@ export function BrandEditor({ initialProject }) {
   useUnsavedWarning(dirty);
 
   const set = (patch) => setValue((current) => ({ ...current, ...patch }));
-  const setSections = (sections) => set({ sections });
-  const updateSection = (id, patch) => setValue((current) => ({ ...current, sections: current.sections.map((section) => (section.id === id ? { ...section, ...patch } : section)) }));
-  const sort = useDragSort(value.sections, setSections);
-  const hasVideos = value.sections.some((section) => section.template === "video");
+  const reels = value.sections.filter((section) => section.template === "video");
+  const blocks = value.sections.filter((section) => section.template !== "video");
+  const setReels = (list) => set({ sections: [...list, ...blocks] });
+  const setBlocks = (list) => set({ sections: [...reels, ...list] });
+  const updateSection = (id, patch) =>
+    setValue((current) => ({ ...current, sections: current.sections.map((section) => (section.id === id ? { ...section, ...patch } : section)) }));
+  const reelSort = useDragSort(reels, setReels);
+  const blockSort = useDragSort(blocks, setBlocks);
+  const photoCount = value.sections.reduce((total, section) => total + section.media.length, 0);
 
   function addSection(templateId) {
     const id = newId();
-    setSections([...value.sections, { id, template: templateId, title: "", description: "", linkUrl: "", media: [], visible: true }]);
+    const section = { id, template: templateId, title: "", description: "", linkUrl: "", media: [], visible: true };
+    if (templateId === "video") setReels([...reels, section]);
+    else setBlocks([...blocks, section]);
     setExpanded((current) => [...current, id]);
     setPicker(false);
     setTimeout(() => document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
   }
 
   async function save(overrides = {}) {
-    const body = { ...value, ...overrides, updatedAt: project.updatedAt };
+    const body = { ...toPayload({ ...value, ...overrides }), updatedAt: project.updatedAt };
     setSaving(true);
     setErrors([]);
     try {
@@ -265,7 +317,53 @@ export function BrandEditor({ initialProject }) {
   }
 
   const slugPreview = slugify(value.slug || value.clientName);
-  const paragraphs = value.summary.split(/\n{2,}/).filter((item) => item.trim()).length;
+
+  // Lista ordenable de secciones (se usa para los reels y para las galerías).
+  const sectionList = (list, setList, sort) => (
+    <>
+      {list.length > 1 ? (
+        <div className="mb-2 flex flex-wrap justify-end gap-2 text-[13px]">
+          <button type="button" className="font-semibold text-muted hover:text-tinta" onClick={() => setExpanded((current) => [...new Set([...current, ...list.map((section) => section.id)])])}>
+            Abrir todas
+          </button>
+          <span className="text-tinta/20">·</span>
+          <button type="button" className="font-semibold text-muted hover:text-tinta" onClick={() => setExpanded((current) => current.filter((id) => !list.some((section) => section.id === id)))}>
+            Cerrar todas
+          </button>
+        </div>
+      ) : null}
+      <ul className="grid grid-cols-1 gap-2.5">
+        {list.map((section, index) => (
+          <li key={section.id} id={`section-${section.id}`} className="scroll-mt-24" {...(expanded.includes(section.id) ? {} : sort.handlers(index))}>
+            <SectionCard
+              section={section}
+              index={index}
+              total={list.length}
+              expanded={expanded.includes(section.id)}
+              onToggle={() => setExpanded((current) => (current.includes(section.id) ? current.filter((id) => id !== section.id) : [...current, section.id]))}
+              onChange={(patch) => updateSection(section.id, patch)}
+              onMove={(from, to) => setList(moveItem(list, from, to))}
+              onDuplicate={() => {
+                const copy = { ...structuredClone(section), id: newId(), title: section.title ? `${section.title} (copia)` : "" };
+                setList([...list.slice(0, index + 1), copy, ...list.slice(index + 1)]);
+                setExpanded((current) => [...current, copy.id]);
+              }}
+              onRemove={async () => {
+                const ok = await confirm({
+                  title: "¿Eliminar esta sección?",
+                  message: "Se quita de la página de la marca al guardar. Las fotos siguen guardadas en Cloudinary. Si solo querés esconderla, usá el ojito.",
+                  confirmLabel: "Eliminar sección",
+                  danger: true
+                });
+                if (ok) setList(list.filter((item) => item.id !== section.id));
+              }}
+              dragOver={sort.overIndex === index}
+            />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 
   return (
     <>
@@ -297,144 +395,133 @@ export function BrandEditor({ initialProject }) {
 
       <ErrorList messages={errors} className="mb-5" />
 
+      {/* Mapa de la página: los bloques del editor siguen el orden de la web. */}
+      <nav aria-label="Partes de la página" className="mb-5 rounded-2xl bg-periwinkle/40 p-4">
+        <p className="text-[13px] font-semibold">La página de la marca se arma en este orden. Tocá una parte para ir a editarla:</p>
+        <ol className="mt-3 flex flex-wrap gap-2">
+          {PAGE_BLOCKS.map((block, index) => (
+            <li key={block.id}>
+              <a
+                href={`#${block.id}`}
+                className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold transition-colors hover:bg-tinta hover:text-crema"
+              >
+                <span className="font-mono text-[12px] text-[#c23434]">{String(index + 1).padStart(2, "0")}</span>
+                {block.label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
         <div className="grid min-w-0 grid-cols-1 gap-5">
-          <Card className="p-5 sm:p-6">
-            <h2 className="mb-5 font-display text-[18px] font-black">Datos de la marca</h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <Field label="Nombre" required htmlFor="brand-name">
-                <TextInput
-                  id="brand-name"
-                  maxLength={80}
-                  value={value.clientName}
-                  onChange={(event) => set({ clientName: event.target.value, ...(slugLocked && project.status !== "published" ? { slug: slugify(event.target.value) } : {}) })}
-                />
-              </Field>
-              <Field label="Rubro" htmlFor="brand-industry" help="Ej: Hamburguesería. Aparece en la tarjeta y en la página.">
-                <TextInput id="brand-industry" maxLength={80} value={value.industry} onChange={(event) => set({ industry: event.target.value })} />
-              </Field>
-              <Field
-                label="Dirección de la página"
-                htmlFor="brand-slug"
-                className="sm:col-span-2"
-                error={value.slug && !isValidSlug(slugPreview) ? "Solo letras minúsculas, números y guiones." : undefined}
-                help={
-                  slugPreview !== project.slug && project.status === "published"
-                    ? `Al guardar, /clientes/${project.slug} va a redirigir a /clientes/${slugPreview}.`
-                    : "Se usa en el link de la marca. Conviene no cambiarla una vez publicada."
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <span className="hidden text-[14px] text-muted sm:inline">/clientes/</span>
+          <BlockCard
+            number={1}
+            id="bloque-encabezado"
+            title="Encabezado"
+            where="Lo primero que se ve: nombre, rubro y presentación sobre el bloque amarillo, con la portada al costado. La misma portada, el nombre y el rubro forman la tarjeta en Clientes y en el inicio."
+          >
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_220px]">
+              <div className="grid grid-cols-1 content-start gap-5">
+                <Field label="Nombre" required htmlFor="brand-name">
                   <TextInput
-                    id="brand-slug"
-                    maxLength={60}
-                    value={value.slug}
-                    onChange={(event) => {
-                      setSlugLocked(false);
-                      set({ slug: event.target.value.toLowerCase().replace(/\s+/g, "-") });
-                    }}
-                    onBlur={() => set({ slug: slugify(value.slug || value.clientName) })}
+                    id="brand-name"
+                    maxLength={80}
+                    value={value.clientName}
+                    onChange={(event) => set({ clientName: event.target.value, ...(slugLocked && project.status !== "published" ? { slug: slugify(event.target.value) } : {}) })}
                   />
-                </div>
-              </Field>
-              <Field
-                label="Descripción"
-                htmlFor="brand-summary"
-                className="sm:col-span-2"
-                help={`El primer párrafo se muestra arriba, junto al nombre; los siguientes, en el bloque «El trabajo». Podés usar **negrita**. ${paragraphs ? `(${paragraphs} ${paragraphs === 1 ? "párrafo" : "párrafos"})` : ""}`}
-              >
-                <TextArea id="brand-summary" rows={6} maxLength={4000} value={value.summary} onChange={(event) => set({ summary: event.target.value })} />
-              </Field>
-              <Field label="Servicios que hicimos" className="sm:col-span-2" help="Ej: Gestión de redes, Fotografía, Reels. Escribí y apretá Enter.">
-                <TagsInput value={value.services} onChange={(services) => set({ services })} max={60} maxItems={12} />
-              </Field>
-            </div>
-          </Card>
-
-          <Card className="p-5 sm:p-6">
-            <h2 className="font-display text-[18px] font-black">Portada</h2>
-            <p className="mt-1 text-[14px] text-muted">Se usa en la tarjeta de Clientes, en el inicio y arriba de la página de la marca. Mejor vertical (4:5). Obligatoria para publicar.</p>
-            <div className="mt-4 max-w-[280px]">
-              <ImageField value={value.coverUrl} onChange={(coverUrl) => set({ coverUrl })} scope="projects" aspect="aspect-[4/5]" label="portada" />
-            </div>
-          </Card>
-
-          <Card className="p-5 sm:p-6">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h2 className="font-display text-[18px] font-black">Secciones de la página</h2>
-                <p className="mt-1 max-w-xl text-[14px] text-muted">Campañas, galerías, reels y textos. Elegí un diseño y completá el contenido: se adapta solo a computadora y celular.</p>
+                </Field>
+                <Field label="Rubro" htmlFor="brand-industry" help="Ej: Hamburguesería. Va en una etiqueta debajo del nombre.">
+                  <TextInput id="brand-industry" maxLength={80} value={value.industry} onChange={(event) => set({ industry: event.target.value })} />
+                </Field>
+                <Field label="Presentación" htmlFor="brand-lead" help="Un párrafo corto debajo del nombre. Podés usar **negrita**.">
+                  <TextArea
+                    id="brand-lead"
+                    rows={4}
+                    maxLength={800}
+                    value={value.lead}
+                    onChange={(event) => set({ lead: event.target.value.replace(/\n{2,}/g, "\n") })}
+                  />
+                </Field>
               </div>
+              <Field label="Portada" required={value.status === "published"} help="Vertical (4:5). Obligatoria para publicar.">
+                <ImageField value={value.coverUrl} onChange={(coverUrl) => set({ coverUrl })} scope="projects" aspect="aspect-[4/5]" label="portada" />
+              </Field>
+            </div>
+            <p className="mt-5 rounded-xl bg-arena px-4 py-3 text-[13px] text-tinta/80">
+              Debajo de la presentación, la web cuenta sola las fotos, los reels y las marcas, y muestra los botones «Ver reels» y «Su Instagram» si hay reels y link de Instagram.
+            </p>
+          </BlockCard>
+
+          <BlockCard
+            number={2}
+            id="bloque-reels"
+            title="Reels"
+            where="Bloque oscuro debajo del encabezado, con los reels en fila. Cada reel abre su link (Instagram, TikTok, YouTube…). Si no hay reels, el bloque no aparece."
+            action={
+              <Button variant="secondary" onClick={() => addSection("video")}>
+                <Plus className="h-4 w-4" aria-hidden="true" /> Agregar reel
+              </Button>
+            }
+          >
+            <Field label="Título del bloque" htmlFor="videos-heading" help="Si lo dejás vacío dice «Reels destacados»." className="mb-5 max-w-md">
+              <TextInput id="videos-heading" maxLength={80} placeholder="Reels destacados" value={value.videosHeading} onChange={(event) => set({ videosHeading: event.target.value })} />
+            </Field>
+            {reels.length ? (
+              sectionList(reels, setReels, reelSort)
+            ) : (
+              <p className="rounded-2xl border border-dashed border-tinta/20 px-6 py-6 text-center text-[14px] text-muted">Todavía no hay reels. Este bloque no se muestra en la web.</p>
+            )}
+          </BlockCard>
+
+          <BlockCard
+            number={3}
+            id="bloque-trabajo"
+            title="El trabajo"
+            where="Texto grande que cuenta cómo acompañaron a la marca. Va después de los reels. Si lo dejás vacío, el bloque no aparece."
+          >
+            <Field htmlFor="brand-work" help="Dejá una línea en blanco para separar párrafos. Podés usar **negrita** y *cursiva*.">
+              <TextArea id="brand-work" rows={6} maxLength={3200} value={value.work} onChange={(event) => set({ work: event.target.value })} />
+            </Field>
+            {!value.lead.trim() && value.work.trim() ? (
+              <p className="mt-3 rounded-xl bg-lemon/70 px-4 py-3 text-[13px]">
+                Ojo: si la presentación queda vacía, el primer párrafo de este texto pasa al encabezado.
+              </p>
+            ) : null}
+          </BlockCard>
+
+          <BlockCard
+            number={4}
+            id="bloque-galerias"
+            title="Galerías y textos"
+            where="Campañas, fotos y textos, uno debajo del otro en este orden. Elegí un diseño y completá el contenido: se adapta solo a computadora y celular."
+            action={
               <Button onClick={() => setPicker(true)}>
                 <Plus className="h-4 w-4" aria-hidden="true" /> Agregar sección
               </Button>
-            </div>
-
-            {hasVideos ? (
-              <Field label="Título del bloque de reels" htmlFor="videos-heading" help="Los reels se agrupan en un bloque oscuro arriba de las galerías." className="mt-5 max-w-md">
-                <TextInput id="videos-heading" maxLength={80} placeholder="Reels destacados" value={value.videosHeading} onChange={(event) => set({ videosHeading: event.target.value })} />
-              </Field>
-            ) : null}
-
-            {value.sections.length ? (
-              <>
-                <div className="mt-5 flex flex-wrap justify-end gap-2 text-[13px]">
-                  <button type="button" className="font-semibold text-muted hover:text-tinta" onClick={() => setExpanded(value.sections.map((section) => section.id))}>
-                    Abrir todas
-                  </button>
-                  <span className="text-tinta/20">·</span>
-                  <button type="button" className="font-semibold text-muted hover:text-tinta" onClick={() => setExpanded([])}>
-                    Cerrar todas
-                  </button>
-                </div>
-                <ul className="mt-2 grid grid-cols-1 gap-2.5">
-                  {value.sections.map((section, index) => (
-                    <li key={section.id} id={`section-${section.id}`} {...(expanded.includes(section.id) ? {} : sort.handlers(index))}>
-                      <SectionCard
-                        section={section}
-                        index={index}
-                        total={value.sections.length}
-                        expanded={expanded.includes(section.id)}
-                        onToggle={() => setExpanded((current) => (current.includes(section.id) ? current.filter((id) => id !== section.id) : [...current, section.id]))}
-                        onChange={(patch) => updateSection(section.id, patch)}
-                        onMove={(from, to) => setSections(moveItem(value.sections, from, to))}
-                        onDuplicate={() => {
-                          const copy = { ...structuredClone(section), id: newId(), title: section.title ? `${section.title} (copia)` : "" };
-                          setSections([...value.sections.slice(0, index + 1), copy, ...value.sections.slice(index + 1)]);
-                          setExpanded((current) => [...current, copy.id]);
-                        }}
-                        onRemove={async () => {
-                          const ok = await confirm({
-                            title: "¿Eliminar esta sección?",
-                            message: "Se quita de la página de la marca al guardar. Las fotos siguen guardadas en Cloudinary. Si solo querés esconderla, usá el ojito.",
-                            confirmLabel: "Eliminar sección",
-                            danger: true
-                          });
-                          if (ok) setSections(value.sections.filter((item) => item.id !== section.id));
-                        }}
-                        dragOver={sort.overIndex === index}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </>
+            }
+          >
+            {blocks.length ? (
+              sectionList(blocks, setBlocks, blockSort)
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-tinta/20 px-6 py-10 text-center">
-                <p className="font-display text-[16px] font-bold">Todavía no hay secciones</p>
-                <p className="mt-1 text-[14px] text-muted">Agregá una galería, un reel o un texto de campaña.</p>
+              <div className="rounded-2xl border border-dashed border-tinta/20 px-6 py-8 text-center">
+                <p className="font-display text-[16px] font-bold">Todavía no hay galerías</p>
+                <p className="mt-1 text-[14px] text-muted">Agregá un mosaico de fotos, una imagen destacada o un texto de campaña.</p>
                 <Button className="mt-5" variant="secondary" onClick={() => setPicker(true)}>
                   <Plus className="h-4 w-4" aria-hidden="true" /> Agregar la primera sección
                 </Button>
               </div>
             )}
-          </Card>
+          </BlockCard>
 
-          <Card className="p-5 sm:p-6">
-            <h2 className="font-display text-[18px] font-black">Instagram de la marca</h2>
-            <p className="mt-1 text-[14px] text-muted">Agrega el botón «Su Instagram» y un bloque al final de la página.</p>
-            <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              <Field label="Link del perfil" htmlFor="ig-url">
+          <BlockCard
+            number={5}
+            id="bloque-instagram"
+            title="Instagram de la marca"
+            where="Bloque con foto y link al perfil, al final de la página. El link también activa el botón «Su Instagram» del encabezado. Después la web muestra sola las marcas anterior y siguiente."
+          >
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Field label="Link del perfil" htmlFor="ig-url" help="Si lo dejás vacío, el bloque no aparece.">
                 <TextInput id="ig-url" type="url" placeholder="https://www.instagram.com/marca/" maxLength={600} value={value.instagramUrl} onChange={(event) => set({ instagramUrl: event.target.value })} />
               </Field>
               <Field label="Texto del bloque" htmlFor="ig-label" help="Ej: Seguí a Angus en Instagram">
@@ -446,7 +533,7 @@ export function BrandEditor({ initialProject }) {
                 </div>
               </Field>
             </div>
-          </Card>
+          </BlockCard>
         </div>
 
         <aside className="grid grid-cols-1 gap-5 lg:sticky lg:top-6">
@@ -478,15 +565,45 @@ export function BrandEditor({ initialProject }) {
             </div>
           </Card>
           <Card className="p-5">
+            <Field
+              label="Dirección de la página"
+              htmlFor="brand-slug"
+              error={value.slug && !isValidSlug(slugPreview) ? "Solo letras minúsculas, números y guiones." : undefined}
+              help={
+                slugPreview !== project.slug && project.status === "published"
+                  ? `Al guardar, /clientes/${project.slug} va a redirigir a /clientes/${slugPreview}.`
+                  : "Es el link de la marca. Conviene no cambiarla una vez publicada."
+              }
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="text-[13px] text-muted">/clientes/</span>
+                <TextInput
+                  id="brand-slug"
+                  maxLength={60}
+                  value={value.slug}
+                  onChange={(event) => {
+                    setSlugLocked(false);
+                    set({ slug: event.target.value.toLowerCase().replace(/\s+/g, "-") });
+                  }}
+                  onBlur={() => set({ slug: slugify(value.slug || value.clientName) })}
+                />
+              </div>
+            </Field>
+          </Card>
+          <Card className="p-5">
             <h2 className="font-display text-[16px] font-black">Resumen</h2>
-            <dl className="mt-3 grid grid-cols-2 gap-3 text-[13px]">
+            <dl className="mt-3 grid grid-cols-3 gap-3 text-[13px]">
+              <div>
+                <dt className="text-muted">Reels</dt>
+                <dd className="font-display text-[22px] font-black">{reels.length}</dd>
+              </div>
               <div>
                 <dt className="text-muted">Secciones</dt>
-                <dd className="font-display text-[22px] font-black">{value.sections.length}</dd>
+                <dd className="font-display text-[22px] font-black">{blocks.length}</dd>
               </div>
               <div>
                 <dt className="text-muted">Fotos</dt>
-                <dd className="font-display text-[22px] font-black">{value.sections.reduce((total, section) => total + section.media.length, 0)}</dd>
+                <dd className="font-display text-[22px] font-black">{photoCount}</dd>
               </div>
             </dl>
             <Button variant="danger-ghost" size="sm" className="mt-4 -ml-2" onClick={removeBrand}>
@@ -512,9 +629,9 @@ export function BrandEditor({ initialProject }) {
       </SaveBar>
 
       <Modal open={picker} onClose={() => setPicker(false)} title="Elegí el diseño de la sección" size="xl">
-        <p className="-mt-1 mb-4 text-[14px] text-muted">Todos respetan la identidad de CoFi y se adaptan solos al celular.</p>
+        <p className="-mt-1 mb-4 text-[14px] text-muted">Todos respetan la identidad de CoFi y se adaptan solos al celular. Los reels se agregan en su propio bloque.</p>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {SECTION_TEMPLATES.map((template) => (
+          {SECTION_TEMPLATES.filter((template) => template.id !== "video").map((template) => (
             <li key={template.id}>
               <button
                 type="button"
