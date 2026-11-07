@@ -1,6 +1,6 @@
 # COFI LAB · Sitio + panel de administración
 
-Sitio de COFI LAB (inicio, clientes, nosotras, contacto) con un panel en `/admin` para que el equipo administre todo el contenido sin tocar código: marcas y sus campañas, fotos, reels, textos de cada página, testimonios, La Cofiteca, mensajes y configuración.
+Sitio de COFI LAB (inicio, clientes, nosotras, contacto) con un panel en `/admin` para que el equipo administre todo el contenido sin tocar código: marcas y sus campañas, fotos, reels, textos de cada página, testimonios y configuración. Las consultas del formulario de contacto llegan por email (Resend).
 
 ## Stack
 
@@ -21,7 +21,7 @@ app/
     (panel)/                  Todo exige sesión (layout.js lo verifica en el servidor)
       marcas/ [id]/           Marcas y trabajos + constructor de secciones
       contenido/ [area]/      Inicio, Clientes, Nosotras, Contacto
-      testimonios/ cofiteca/ mensajes/ configuracion/
+      testimonios/ configuracion/
   api/admin/                  APIs protegidas (sesión + origen) para cada recurso
 components/site/              Componentes del sitio (diseño público, sin cambios de estilo)
 components/admin/             Interfaz del panel
@@ -42,9 +42,19 @@ scripts/                      Esquema, admins, importación legacy, limpieza de 
 | Secciones de marca  | Plantillas fijas: mosaico, grilla cuadrada, fila de verticales, imagen destacada, imagen + texto, reel/video, bloque de texto. Agregar, duplicar, ordenar, ocultar y eliminar. |
 | Contenido del sitio | Inicio (portada, intro, fotos, servicios, diferenciales, números, clientes, testimonios, llamado final), Clientes, Nosotras (equipo, esencia, valores) y Contacto (textos, foto, opciones del formulario). |
 | Testimonios         | ABM, ocultar, ordenar, foto.                                                                                                   |
-| La Cofiteca         | ABM de productos (nombre, categoría, descripciones, imágenes, link, WhatsApp). **Sin página pública todavía.**                  |
-| Mensajes            | Consultas del formulario con estado leído / no leído, búsqueda y borrado.                                                      |
 | Configuración       | Instagram, redes del equipo, email, WhatsApp, textos del pie y del menú, frase y descripción para buscadores.                  |
+
+Las tablas `cofiteca_products` y `contact_messages` siguen en la base, pero ya no tienen pantalla en el panel.
+
+### Formulario de contacto (Resend)
+
+Cada consulta se envía por email con [Resend](https://resend.com) (`lib/server/email.js`, API REST, sin SDK) y además se guarda en `contact_messages` como respaldo, por si el email falla. El email llega con `reply_to` = quien escribió: alcanza con responderlo.
+
+- `RESEND_API_KEY`: sin ella no se envía nada (solo se guarda el respaldo).
+- `CONTACT_EMAIL_TO`: destinatarios, separados por coma. Si falta, se usa el email público de Configuración.
+- `CONTACT_EMAIL_FROM`: remitente de un dominio verificado en Resend (ej. `CoFi Web <web@tudominio.com>`). Si falta se usa `onboarding@resend.dev`, que solo sirve para probar: Resend únicamente entrega al email dueño de la cuenta.
+
+El dashboard del panel muestra si el envío por email está configurado y a qué dirección llega.
 
 Logos, tipografías, colores y estructura están protegidos: los colores se eligen de la paleta del Brand Book y las secciones solo con plantillas.
 
@@ -57,7 +67,8 @@ Logos, tipografías, colores y estructura están protegidos: los colores se elig
 
 ### Imágenes (Cloudinary)
 
-- Se optimizan en el navegador (WebP, máx. 2000 px) y se suben con firma del servidor a carpetas fijas (`cofilab/trabajos`, `cofilab/testimonios`, `cofilab/cofiteca`, `cofilab/sitio`). El API secret nunca sale del servidor.
+- La web pide cada foto con `f_auto,q_auto,c_limit,w_…` usando solo 7 anchos posibles (256 a 1920 px, ver `next.config.mjs`); el panel reutiliza esos mismos anchos. Menos variantes por foto = menos transformaciones consumidas y más aciertos de caché.
+- Se optimizan en el navegador (WebP, máx. 2000 px) y se suben con firma del servidor a carpetas fijas (`cofilab/trabajos`, `cofilab/testimonios`, `cofilab/sitio`). El API secret nunca sale del servidor.
 - El servidor solo acepta URLs de la cuenta propia de Cloudinary (y las del sitio anterior).
 - Las ~180 fotos ya migradas (`data/legacy/cloudinary-map.json`) se siguen usando tal cual; no se vuelven a subir.
 - **Quitar una foto no la borra de Cloudinary.** Cada subida queda registrada en `media_assets`; `npm run media:huerfanas` lista las que ya no usa nada (y con `-- --borrar` las elimina).
@@ -91,6 +102,9 @@ Requiere Node 22.9 o superior.
 | `CLOUDINARY_CLOUD_NAME`  | Nombre de la cuenta de Cloudinary                                    |
 | `CLOUDINARY_API_KEY`     | API key (privada)                                                    |
 | `CLOUDINARY_API_SECRET`  | API secret (privada, nunca con prefijo `NEXT_PUBLIC_`)               |
+| `RESEND_API_KEY`         | Envío de consultas por email (privada, opcional)                     |
+| `CONTACT_EMAIL_TO`       | Destinatarios de las consultas (opcional)                            |
+| `CONTACT_EMAIL_FROM`     | Remitente verificado en Resend (opcional)                            |
 
 `CLOUDINARY_URL=cloudinary://KEY:SECRET@CLOUD` puede reemplazar las tres de Cloudinary.
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site } from "@/config/site";
 import { BackToTop } from "./BackToTop";
-import { Logo, SectionLabel, Shape, StageTag } from "./Brand";
+import { Logo, SectionLabel, Shape } from "./Brand";
 import { InstagramIcon } from "./icons";
 import { Reveal } from "./Reveal";
 
@@ -14,8 +14,6 @@ const fallbackSettings = {
   footerLabel: "Contacto",
   footerTitle: "¿Tenés un proyecto en mente?",
   footerButton: "Contanos tu idea",
-  showCofitecaTag: true,
-  cofitecaTag: "Próximamente: La CoFiteca",
   tagline: site.tagline
 };
 
@@ -50,11 +48,6 @@ export function Footer({ settings = fallbackSettings }) {
           <div>
             <Logo color="crema" className="w-[120px]" />
             <p className="mt-5 max-w-[17rem] text-[15px] leading-relaxed text-crema/75">{settings.tagline}</p>
-            {settings.showCofitecaTag && settings.cofitecaTag ? (
-              <StageTag tone="lemon" className="mt-6">
-                {settings.cofitecaTag}
-              </StageTag>
-            ) : null}
           </div>
 
           <nav aria-label="Pie de página">

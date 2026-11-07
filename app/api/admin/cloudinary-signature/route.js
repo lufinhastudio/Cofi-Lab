@@ -3,7 +3,7 @@ import { createUploadSignature } from "@/lib/server/cloudinary";
 import { errorResponse, json, PublicApiError, readJsonBody, validateMutationOrigin } from "@/lib/server/http";
 
 // Devuelve una firma de Cloudinary para que el admin suba imágenes directo desde
-// el navegador, sin exponer el API secret. Body: { "scope": "projects" | "cofiteca" | "testimonials" }
+// el navegador, sin exponer el API secret. Body: { "scope": "projects" | "testimonials" | "site" }
 export async function POST(request) {
   try {
     validateMutationOrigin(request);

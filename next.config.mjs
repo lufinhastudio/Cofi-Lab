@@ -21,7 +21,12 @@ const nextConfig = {
   images: {
     // Cloudinary redimensiona y elige formato (ver lib/imageLoader.js).
     loader: "custom",
-    loaderFile: "./lib/imageLoader.js"
+    loaderFile: "./lib/imageLoader.js",
+    // Pocos anchos posibles = menos variantes por foto en Cloudinary (cada ancho
+    // distinto es una transformación que consume créditos) y más aciertos de caché.
+    // Tope 1920: las fotos subidas miden como máximo 2000 px, más ancho no suma calidad.
+    deviceSizes: [640, 960, 1280, 1600, 1920],
+    imageSizes: [256, 384]
   },
   async redirects() {
     return [

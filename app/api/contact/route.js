@@ -1,18 +1,21 @@
 import { getSql } from "@/lib/server/db";
+import { sendContactEmail } from "@/lib/server/email";
 import { errorResponse, getClientIp, json, PublicApiError, readJsonBody, validateMutationOrigin } from "@/lib/server/http";
 import { assertAllowed, buildThrottleKey, recordHit } from "@/lib/server/loginThrottle";
 import { getSiteContent } from "@/lib/server/siteContent";
 
-// Guarda los mensajes del formulario en la base (se verán en el admin).
+// Formulario de contacto: la consulta se envía por email con Resend
+// (lib/server/email.js) y además se guarda en la base como respaldo, para no
+// perderla si el email falla o Resend todavía no está configurado.
 export async function POST(request) {
   try {
     validateMutationOrigin(request);
     const body = await readJsonBody(request, { maxBytes: 16 * 1024 });
 
-    // Bot: completó el campo oculto. Respondemos OK sin guardar.
+    // Bot: completó el campo oculto. Respondemos OK sin guardar ni enviar.
     if (body.website) return json({ ok: true });
 
-    const name = String(body.name ?? "").trim().slice(0, 120);
+    const name = String(body.name ?? "").replace(/\s+/g, " ").trim().slice(0, 120);
     const email = String(body.email ?? "").trim().toLowerCase().slice(0, 254);
     const message = String(body.message ?? "").trim().slice(0, 3000);
     // Las opciones de "Me interesa…" se editan desde el panel (Contenido › Contacto).
@@ -32,6 +35,12 @@ export async function POST(request) {
       insert into contact_messages (name, email, services, message)
       values (${name}, ${email}, ${services}, ${message || null})
     `;
+
+    const delivery = await sendContactEmail({ name, email, services, message });
+    if (!delivery.sent && delivery.reason !== "not-configured") {
+      // La consulta quedó guardada; el error solo va a los logs del servidor.
+      console.error("[contact] No se pudo enviar el email:", delivery.reason);
+    }
     return json({ ok: true });
   } catch (error) {
     return errorResponse(error, { scope: "contact", fallback: "No pudimos enviar el mensaje. Probá de nuevo." });
