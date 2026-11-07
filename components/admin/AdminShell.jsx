@@ -71,10 +71,7 @@ export function AdminShell({ user, children }) {
         >
           <LogOut className="h-[18px] w-[18px]" aria-hidden="true" /> {leaving ? "Saliendo…" : "Cerrar sesión"}
         </button>
-        <p className="truncate px-3 pt-2 text-[12px] text-crema/50" title={user.email}>
-          {user.name !== user.email ? `${user.name} · ` : ""}
-          {user.email}
-        </p>
+        <p className="truncate px-3 pt-2 text-[12px] text-crema/50">COFI LAB</p>
       </div>
     </nav>
   );

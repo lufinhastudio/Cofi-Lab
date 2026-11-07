@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Briefcase, Contact, Home, MessageSquareQuote, Settings, Users } from "lucide-react";
+import { ArrowRight, Briefcase, Contact, Home, Users } from "lucide-react";
 import { PageHeader } from "@/components/admin/ui";
 import { CONTENT_AREAS } from "@/lib/content/schemas";
 
@@ -10,12 +10,6 @@ const areas = [
   { href: "/admin/contenido/clientes", key: "clients", icon: Briefcase },
   { href: "/admin/contenido/nosotras", key: "about", icon: Users },
   { href: "/admin/contenido/contacto", key: "contact", icon: Contact }
-];
-
-const related = [
-  { href: "/admin/marcas", title: "Marcas y trabajos", description: "Cada marca, su portada, orden, visibilidad y su página con campañas.", icon: Briefcase },
-  { href: "/admin/testimonios", title: "Testimonios", description: "El carrusel del inicio.", icon: MessageSquareQuote },
-  { href: "/admin/configuracion", title: "Configuración", description: "Redes, datos de contacto, pie de página y buscadores.", icon: Settings }
 ];
 
 function AreaLink({ href, title, description, icon: Icon }) {
@@ -45,14 +39,6 @@ export default function AdminContentPage() {
         {areas.map((area) => (
           <li key={area.key}>
             <AreaLink href={area.href} title={CONTENT_AREAS[area.key].title} description={CONTENT_AREAS[area.key].description} icon={area.icon} />
-          </li>
-        ))}
-      </ul>
-      <h2 className="mb-3 mt-10 font-display text-[18px] font-black">También se edita desde</h2>
-      <ul className="grid gap-3 sm:grid-cols-3">
-        {related.map((item) => (
-          <li key={item.href}>
-            <AreaLink {...item} />
           </li>
         ))}
       </ul>
