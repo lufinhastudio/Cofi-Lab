@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Briefcase, FileText, Mail, MessageSquareQuote, Plus, Settings } from "lucide-react";
+import { AlertTriangle, ArrowRight, Briefcase, FileText, MessageSquareQuote, Plus, Settings } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { PROJECT_STATUS, STATUS_TONE } from "@/lib/content/options";
 import { requireAdminPage } from "@/lib/server/admin";
 import { getDashboardStats } from "@/lib/server/collections";
-import { getContactEmailStatus } from "@/lib/server/email";
 
 export const metadata = { title: { absolute: "Dashboard · Panel CoFi" } };
 
@@ -35,7 +34,6 @@ export default async function AdminHomePage() {
     if (error?.code === "42P01" || error?.code === "42703") migrationMissing = true;
     else throw error;
   }
-  const contactEmail = await getContactEmailStatus();
   const firstName = String(session.user.name || "").split(" ")[0];
 
   return (
@@ -76,7 +74,7 @@ export default async function AdminHomePage() {
             <Stat href="/admin/marcas" label="Secciones" value={stats.counts.sections} note="campañas, galerías, reels y textos" />
           </div>
 
-          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+          <div className="mt-6">
             <Card className="p-5 sm:p-6">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-[18px] font-black">Últimas marcas editadas</h2>
@@ -97,22 +95,6 @@ export default async function AdminHomePage() {
                   </li>
                 ))}
               </ul>
-            </Card>
-            <Card className="p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 font-display text-[18px] font-black">
-                <Mail className="h-5 w-5" aria-hidden="true" /> Formulario de contacto
-              </h2>
-              {contactEmail.configured ? (
-                <p className="mt-4 text-[14px] leading-relaxed">
-                  Las consultas de la web llegan por email a <strong className="[overflow-wrap:anywhere]">{contactEmail.to}</strong>. Para responder, alcanza con
-                  contestar ese email.
-                </p>
-              ) : (
-                <p className="mt-4 rounded-xl bg-lemon/70 p-3 text-[14px] leading-relaxed">
-                  <strong>Todavía no se envían por email.</strong> Falta configurar Resend en el servidor (variables <code>RESEND_API_KEY</code> y{" "}
-                  <code>CONTACT_EMAIL_TO</code>). Mientras tanto las consultas se guardan en la base como respaldo.
-                </p>
-              )}
             </Card>
           </div>
         </>
