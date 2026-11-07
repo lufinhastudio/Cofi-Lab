@@ -1,8 +1,10 @@
-export default function AdminCofitecaPage() {
-  return (
-    <section>
-      <h1 className="text-2xl font-semibold">La Cofiteca</h1>
-      <p className="mt-2 text-sm opacity-70">Pendiente: agregar, editar y ocultar libros y juegos.</p>
-    </section>
-  );
+import { requireAdminPage } from "@/lib/server/admin";
+import { CofitecaManager } from "@/components/admin/CofitecaManager";
+import { listProductsAdmin } from "@/lib/server/collections";
+
+export const metadata = { title: { absolute: "La Cofiteca · Panel CoFi" } };
+
+export default async function AdminCofitecaPage() {
+  await requireAdminPage();
+  return <CofitecaManager initialItems={await listProductsAdmin()} />;
 }

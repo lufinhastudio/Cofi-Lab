@@ -1,15 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, Instagram, Play } from "lucide-react";
 import { Emphasis } from "@/lib/emphasis";
-import { getPublicProject, getPublicProjects } from "@/lib/server/content";
+import { findRenamedProjectSlug, getPublicProject, getPublicProjects } from "@/lib/server/content";
 import { SectionLabel, Shape, StageTag } from "@/components/site/Brand";
 import { Gallery } from "@/components/site/Gallery";
 import { InstagramBlock } from "@/components/site/InstagramBlock";
 import { Reveal } from "@/components/site/Reveal";
 import { VideoCard } from "@/components/site/VideoCard";
 
+// Respaldo: además de la revalidación inmediata al guardar en el panel.
+// Las marcas nuevas se generan a demanda por su slug (dynamicParams).
 export const revalidate = 60;
 
 export async function generateStaticParams() {
@@ -33,14 +35,21 @@ export async function generateMetadata({ params }) {
 export default async function ProjectPage({ params }) {
   const { slug } = await params;
   const result = await getPublicProject(slug);
-  if (!result) notFound();
+  if (!result) {
+    const renamed = await findRenamedProjectSlug(slug);
+    if (renamed && renamed !== slug) permanentRedirect(`/clientes/${renamed}`);
+    notFound();
+  }
   const { project, previous, next } = result;
 
   const [lead, ...rest] = project.summary.split(/\n{2,}/).filter(Boolean);
   const videos = project.sections.filter((section) => section.kind === "video");
-  const galleries = project.sections.filter((section) => section.kind !== "video");
-  const photos = galleries.flatMap((section) => section.media).filter((item) => item?.url);
-  const brands = galleries.filter((section) => section.title);
+  // Secciones de contenido en el orden del panel; las vacías no se muestran.
+  const galleries = project.sections.filter((section) =>
+    section.kind === "text" ? section.title || section.description : section.kind !== "video" && section.media.length
+  );
+  const photos = galleries.flatMap((section) => (section.kind === "text" ? [] : section.media)).filter((item) => item?.url);
+  const brands = galleries.filter((section) => section.kind === "gallery" && section.title);
 
   const stats = [
     photos.length ? { value: photos.length, label: "Fotos" } : null,
@@ -150,11 +159,25 @@ export default async function ProjectPage({ params }) {
 
       {/* ── Galerías ──────────────────────────────────────────────────── */}
       <div className="container-site space-y-16 pb-8 lg:space-y-24">
-        {galleries.map((section, index) => (
+        {galleries.map((section, index) =>
+          section.kind === "text" ? (
+            <Reveal as="section" key={section.id} className="grid gap-6 border-t-[1.5px] border-tinta pt-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
+              {section.title ? <h2 className="title-pop text-[32px] sm:text-[44px]">{section.title}</h2> : <span aria-hidden="true" />}
+              {section.description ? (
+                <div className="space-y-4 font-display text-[20px] font-medium leading-snug sm:text-[24px]">
+                  {section.description.split(/\n{2,}/).filter(Boolean).map((paragraph, paragraphIndex) => (
+                    <p key={paragraphIndex}>
+                      <Emphasis text={paragraph} />
+                    </p>
+                  ))}
+                </div>
+              ) : null}
+            </Reveal>
+          ) : (
           <Reveal as="section" key={section.id}>
-            {section.title ? (
+            {section.title || (section.description && section.layout !== "feature") ? (
               <div className="mb-8 grid gap-3 border-t-[1.5px] border-tinta pt-6 lg:grid-cols-[1fr_2fr] lg:gap-16">
-                <h2 className="title-pop text-[32px] sm:text-[44px]">{section.title}</h2>
+                {section.title ? <h2 className="title-pop text-[32px] sm:text-[44px]">{section.title}</h2> : <span aria-hidden="true" />}
                 {section.description ? (
                   <p className="max-w-[40rem] text-[17px] leading-relaxed">
                     <Emphasis text={section.description} />
@@ -171,7 +194,7 @@ export default async function ProjectPage({ params }) {
               layout={section.layout}
               alt={`${project.clientName}${section.title ? ` · ${section.title}` : ""}`}
               description={
-                !section.title && section.description ? (
+                !section.title && section.description && section.layout === "feature" ? (
                   <p className="font-display text-[22px] font-bold leading-snug">
                     <Emphasis text={section.description.replace(/\*\*/g, "")} />
                   </p>
@@ -179,7 +202,8 @@ export default async function ProjectPage({ params }) {
               }
             />
           </Reveal>
-        ))}
+          )
+        )}
 
         {project.instagramUrl ? (
           <Reveal>

@@ -10,7 +10,7 @@ import { Shape } from "./Brand";
 const blank =
   "mx-1 inline-block min-w-0 border-0 border-b-[2.5px] border-tinta bg-transparent px-1 pb-0.5 align-baseline font-display text-[22px] font-bold text-tinta outline-none transition-colors placeholder:font-normal placeholder:text-tinta/35 focus:border-watermelon focus:ring-0 sm:text-[28px]";
 
-export function ContactForm({ services }) {
+export function ContactForm({ services, successTitle = "¡Gracias!", successText = "Ya tenemos tu idea en el laboratorio. Te respondemos a la brevedad." }) {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
   const [selected, setSelected] = useState([]);
@@ -50,8 +50,10 @@ export function ContactForm({ services }) {
     return (
       <div className="relative flex min-h-[460px] animate-fade-in flex-col items-start justify-center" role="status">
         <Shape type="flor" color="watermelon" className="h-20 w-20" />
-        <p className="title-pop mt-8 text-[44px] sm:text-[56px]">¡Gracias{firstName ? `, ${firstName}` : ""}!</p>
-        <p className="mt-4 max-w-sm text-[17px] leading-relaxed">Ya tenemos tu idea en el laboratorio. Te respondemos a la brevedad.</p>
+        <p className="title-pop mt-8 text-[44px] sm:text-[56px]">
+          {firstName && /!$/.test(successTitle) ? `${successTitle.slice(0, -1)}, ${firstName}!` : successTitle}
+        </p>
+        <p className="mt-4 max-w-sm text-[17px] leading-relaxed">{successText}</p>
         <button type="button" onClick={() => setStatus("idle")} className="btn-outline mt-10">
           Escribir otro mensaje
         </button>

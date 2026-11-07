@@ -8,7 +8,7 @@ import { SectionLabel, Shape } from "./Brand";
 
 // Testimonios: foto + cita sobre bloque de color. Pestañas con nombres,
 // barra de progreso, flechas y deslizar con el dedo.
-export function Testimonials({ items, autoplay = 8000 }) {
+export function Testimonials({ items, autoplay = 8000, label = "Testimonios", title = "Lo que dicen" }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
@@ -55,8 +55,8 @@ export function Testimonials({ items, autoplay = 8000 }) {
     >
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <SectionLabel number="05">Testimonios</SectionLabel>
-          <h2 className="title-pop mt-3 text-[40px] sm:text-[56px]">Lo que dicen</h2>
+          <SectionLabel number="05">{label}</SectionLabel>
+          <h2 className="title-pop mt-3 text-[40px] sm:text-[56px]">{title}</h2>
         </div>
         {total > 1 ? (
           <div role="tablist" aria-label="Testimonios" className="flex flex-wrap gap-2">
@@ -87,14 +87,14 @@ export function Testimonials({ items, autoplay = 8000 }) {
       <div className="mt-10 grid overflow-hidden md:grid-cols-[0.9fr_1.1fr]">
         <div className="relative aspect-[4/3] bg-arena md:aspect-auto md:min-h-[460px]">
           {items.map((testimonial, itemIndex) => (
-            <Image
+            testimonial.imageUrl ? <Image
               key={testimonial.id}
               src={testimonial.imageUrl}
               alt={testimonial.company ? `Trabajo para ${testimonial.company}` : ""}
               fill
               sizes="(min-width: 768px) 45vw, 100vw"
               className={cn("object-cover transition-opacity duration-700", itemIndex === index ? "opacity-100" : "opacity-0")}
-            />
+            /> : null
           ))}
         </div>
 

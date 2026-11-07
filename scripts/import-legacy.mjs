@@ -67,6 +67,15 @@ if (doDatabase) {
   const sql = neon(process.env.DATABASE_URL);
   const img = (path) => (path ? map[path] || `${PIXIESET}${path}` : null);
 
+  // Resguardo: una vez que el contenido se administra desde el panel, volver a
+  // importar pisaría las ediciones (reemplaza secciones de las marcas originales).
+  const [{ existing }] = await sql`select count(*)::int as existing from projects`;
+  if (existing > 0 && !args.has("--forzar")) {
+    console.log(`La base ya tiene ${existing} marcas: no se reimporta para no pisar lo editado en el panel.`);
+    console.log("Si de verdad querés restaurar las marcas originales: npm run import:legacy -- --solo-base --forzar");
+    process.exit(0);
+  }
+
   for (const [index, project] of projects.entries()) {
     const [row] = await sql`
       insert into projects (slug, client_name, summary, cover_url, videos_heading, instagram_url, instagram_label, instagram_image_url, visible, sort_order)
