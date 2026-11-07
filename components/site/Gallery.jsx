@@ -18,7 +18,7 @@ export function Gallery({ media, layout = "grid", alt = "", description }) {
 
   const tile = (item, index, className, sizes, aspect) => (
     <button
-      key={item.url}
+      key={`${item.url}-${index}`}
       type="button"
       onClick={() => setOpen(index)}
       className={cn("group relative block w-full overflow-hidden bg-arena", aspect, className)}
@@ -60,7 +60,7 @@ export function Gallery({ media, layout = "grid", alt = "", description }) {
     content = (
       <div className="columns-2 gap-3 sm:gap-4 lg:columns-3 [&>*]:mb-3 sm:[&>*]:mb-4">
         {images.map((item, index) => (
-          <div key={item.url} className="break-inside-avoid">
+          <div key={`${item.url}-${index}`} className="break-inside-avoid">
             {tile(item, index, "", "(min-width: 1024px) 33vw, 50vw", "")}
           </div>
         ))}

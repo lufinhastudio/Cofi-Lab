@@ -1,9 +1,7 @@
 import { getSql } from "@/lib/server/db";
 import { errorResponse, getClientIp, json, PublicApiError, readJsonBody, validateMutationOrigin } from "@/lib/server/http";
 import { assertAllowed, buildThrottleKey, recordHit } from "@/lib/server/loginThrottle";
-import { contactPage } from "@/config/content";
-
-const allowedServices = new Set(contactPage.services);
+import { getSiteContent } from "@/lib/server/siteContent";
 
 // Guarda los mensajes del formulario en la base (se verán en el admin).
 export async function POST(request) {
@@ -17,6 +15,8 @@ export async function POST(request) {
     const name = String(body.name ?? "").trim().slice(0, 120);
     const email = String(body.email ?? "").trim().toLowerCase().slice(0, 254);
     const message = String(body.message ?? "").trim().slice(0, 3000);
+    // Las opciones de "Me interesa…" se editan desde el panel (Contenido › Contacto).
+    const allowedServices = new Set((await getSiteContent("contact")).services);
     const services = Array.isArray(body.services) ? body.services.filter((item) => allowedServices.has(item)).slice(0, 10) : [];
 
     if (!name) throw new PublicApiError("INVALID_INPUT", "Completá tu nombre.");

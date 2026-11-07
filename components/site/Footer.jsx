@@ -5,8 +5,23 @@ import { Logo, SectionLabel, Shape, StageTag } from "./Brand";
 import { InstagramIcon } from "./icons";
 import { Reveal } from "./Reveal";
 
+const fallbackSettings = {
+  instagramHandle: site.instagram.handle,
+  instagramUrl: site.instagram.url,
+  teamSocials: site.team,
+  email: site.contact.email,
+  whatsapp: site.contact.whatsapp,
+  footerLabel: "Contacto",
+  footerTitle: "¿Tenés un proyecto en mente?",
+  footerButton: "Contanos tu idea",
+  showCofitecaTag: true,
+  cofitecaTag: "Próximamente: La CoFiteca",
+  tagline: site.tagline
+};
+
 // Footer en la capa Laboratorio: cacao con retícula visible.
-export function Footer() {
+// settings: datos de Configuración del panel (redes, contacto y textos).
+export function Footer({ settings = fallbackSettings }) {
   const year = new Date().getFullYear();
 
   return (
@@ -16,28 +31,30 @@ export function Footer() {
       <div className="container-site relative pb-10 pt-20 lg:pt-28">
         {/* Llamado principal */}
         <Reveal className="max-w-[52rem]">
-          <SectionLabel tone="lemon">Contacto</SectionLabel>
-          <h2 className="title-pop mt-4 text-[44px] text-crema sm:text-[64px] lg:text-[80px]">
-            ¿Tenés un proyecto en mente?
-          </h2>
+          <SectionLabel tone="lemon">{settings.footerLabel}</SectionLabel>
+          <h2 className="title-pop mt-4 text-[44px] text-crema sm:text-[64px] lg:text-[80px]">{settings.footerTitle}</h2>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link href="/contacto" className="btn-watermelon">
-              Contanos tu idea
+              {settings.footerButton}
             </Link>
-            <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="btn-outline-light">
-              <InstagramIcon className="h-4 w-4" />
-              {site.instagram.handle}
-            </a>
+            {settings.instagramUrl ? (
+              <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn-outline-light">
+                <InstagramIcon className="h-4 w-4" />
+                {settings.instagramHandle}
+              </a>
+            ) : null}
           </div>
         </Reveal>
 
         <div className="mt-20 grid gap-12 border-t border-crema/15 pt-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Logo color="crema" className="w-[120px]" />
-            <p className="mt-5 max-w-[17rem] text-[15px] leading-relaxed text-crema/75">{site.tagline}</p>
-            <StageTag tone="lemon" className="mt-6">
-              Próximamente: La CoFiteca
-            </StageTag>
+            <p className="mt-5 max-w-[17rem] text-[15px] leading-relaxed text-crema/75">{settings.tagline}</p>
+            {settings.showCofitecaTag && settings.cofitecaTag ? (
+              <StageTag tone="lemon" className="mt-6">
+                {settings.cofitecaTag}
+              </StageTag>
+            ) : null}
           </div>
 
           <nav aria-label="Pie de página">
@@ -61,17 +78,26 @@ export function Footer() {
           <div>
             <p className="mono-label text-periwinkle">Seguinos</p>
             <ul className="mt-5 space-y-2.5 text-[16px]">
-              <li>
-                <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="link-underline">
-                  {site.instagram.handle}
-                </a>
-              </li>
-              {site.team.map((member) => (
-                <li key={member.handle} className="text-crema/70">
-                  {member.name} ·{" "}
-                  <a href={member.url} target="_blank" rel="noopener noreferrer" className="link-underline">
-                    {member.handle}
+              {settings.instagramUrl ? (
+                <li>
+                  <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="link-underline">
+                    {settings.instagramHandle}
                   </a>
+                </li>
+              ) : null}
+              {settings.teamSocials.map((member, index) => (
+                <li key={`${member.name}-${index}`} className="text-crema/70">
+                  {member.name}
+                  {member.url ? (
+                    <>
+                      {" · "}
+                      <a href={member.url} target="_blank" rel="noopener noreferrer" className="link-underline">
+                        {member.handle || "Instagram"}
+                      </a>
+                    </>
+                  ) : member.handle ? (
+                    ` · ${member.handle}`
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -85,16 +111,16 @@ export function Footer() {
                   Formulario de contacto
                 </Link>
               </li>
-              {site.contact.email ? (
+              {settings.email ? (
                 <li>
-                  <a href={`mailto:${site.contact.email}`} className="link-underline">
-                    {site.contact.email}
+                  <a href={`mailto:${settings.email}`} className="link-underline [overflow-wrap:anywhere]">
+                    {settings.email}
                   </a>
                 </li>
               ) : null}
-              {site.contact.whatsapp ? (
+              {settings.whatsapp ? (
                 <li>
-                  <a href={`https://wa.me/${site.contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="link-underline">
+                  <a href={`https://wa.me/${settings.whatsapp}`} target="_blank" rel="noopener noreferrer" className="link-underline">
                     WhatsApp
                   </a>
                 </li>

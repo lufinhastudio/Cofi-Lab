@@ -2,11 +2,13 @@ import Link from "next/link";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Shape } from "@/components/site/Brand";
+import { getSiteSettings } from "@/lib/server/siteContent";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const settings = await getSiteSettings().catch(() => undefined);
   return (
     <>
-      <Header />
+      <Header settings={settings ? { instagramHandle: settings.instagramHandle, instagramUrl: settings.instagramUrl, headerCta: settings.headerCta } : undefined} />
       <main className="relative overflow-hidden bg-lemon">
         <Shape type="sello" color="watermelon" spin className="absolute -right-16 -top-16 h-64 w-64" />
         <div className="container-site relative flex min-h-[60vh] flex-col items-start justify-center py-24">
@@ -18,7 +20,7 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

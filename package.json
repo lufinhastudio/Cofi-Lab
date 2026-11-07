@@ -3,15 +3,16 @@
   "private": true,
   "version": "0.1.0",
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22.9"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "create-admin": "node --env-file=.env.local scripts/create-admin.mjs",
-    "db:schema": "node --env-file=.env.local scripts/apply-schema.mjs",
-    "import:legacy": "node --env-file=.env.local scripts/import-legacy.mjs"
+    "create-admin": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/create-admin.mjs",
+    "db:schema": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/apply-schema.mjs",
+    "import:legacy": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/import-legacy.mjs",
+    "media:huerfanas": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/media-orphans.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",

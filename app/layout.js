@@ -1,6 +1,7 @@
 import { Poppins, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "@/config/site";
+import { getSiteSettings } from "@/lib/server/siteContent";
 
 // Tipografías del Brand Book: Poppins (Black títulos · Bold subtítulos · Regular cuerpo)
 // y Space Mono (la voz del Laboratorio: solo etiquetas y datos).
@@ -18,18 +19,22 @@ const spaceMono = Space_Mono({
   display: "swap"
 });
 
-export const metadata = {
-  metadataBase: new URL(site.url),
-  title: { default: `${site.name} · ${site.tagline}`, template: `%s · ${site.name}` },
-  description: site.description,
-  openGraph: {
-    title: site.name,
-    description: site.description,
-    type: "website",
-    locale: "es_AR",
-    siteName: site.name
-  }
-};
+// La frase y la descripción se editan en el panel (Configuración › Buscadores y redes).
+export async function generateMetadata() {
+  const settings = await getSiteSettings().catch(() => ({ tagline: site.tagline, description: site.description }));
+  return {
+    metadataBase: new URL(site.url),
+    title: { default: `${site.name} · ${settings.tagline}`, template: `%s · ${site.name}` },
+    description: settings.description,
+    openGraph: {
+      title: site.name,
+      description: settings.description,
+      type: "website",
+      locale: "es_AR",
+      siteName: site.name
+    }
+  };
+}
 
 export const viewport = {
   themeColor: "#AFC5FF"

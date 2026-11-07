@@ -1,8 +1,6 @@
-export default function AdminProjectsPage() {
-  return (
-    <section>
-      <h1 className="text-2xl font-semibold">Trabajos</h1>
-      <p className="mt-2 text-sm opacity-70">Pendiente: agregar, editar, ordenar y ocultar trabajos y su contenido de “Ver más”.</p>
-    </section>
-  );
+import { redirect } from "next/navigation";
+
+// La sección se llama ahora "Marcas y trabajos".
+export default function AdminProjectsRedirect() {
+  redirect("/admin/marcas");
 }

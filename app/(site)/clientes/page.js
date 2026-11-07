@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { clientsPage } from "@/config/content";
 import { getPublicProjects } from "@/lib/server/content";
+import { getSiteContent } from "@/lib/server/siteContent";
 import { SectionLabel, Shape, toneClass } from "@/components/site/Brand";
 import { Reveal } from "@/components/site/Reveal";
 import { cn } from "@/lib/utils";
@@ -17,21 +17,22 @@ export const metadata = {
 const tones = ["periwinkle", "lemon", "cantaloupe"];
 
 export default async function ClientsPage() {
-  const projects = await getPublicProjects();
+  const [projects, clientsPage] = await Promise.all([getPublicProjects(), getSiteContent("clients")]);
 
   return (
     <>
       <section className="relative overflow-hidden bg-lemon">
         <Shape type="sello" color="watermelon" spin className="absolute -right-14 -top-14 h-48 w-48 sm:h-64 sm:w-64" />
         <div className="container-site relative pb-16 pt-12 lg:pb-20 lg:pt-20">
-          <SectionLabel tone="tinta">Casos</SectionLabel>
+          <SectionLabel tone="tinta">{clientsPage.label}</SectionLabel>
           <h1 className="title-pop mt-4 animate-fade-in-up text-[56px] sm:text-[88px]">{clientsPage.title}</h1>
           <p className="mt-6 max-w-[38rem] animate-fade-in-up font-display text-[20px] font-bold [animation-delay:80ms] sm:text-[24px]">{clientsPage.lead}</p>
-          <p className="mt-3 max-w-[40rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:140ms]">{clientsPage.intro}</p>
+          {clientsPage.intro ? <p className="mt-3 max-w-[40rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:140ms]">{clientsPage.intro}</p> : null}
         </div>
       </section>
 
       <section className="container-site py-16 lg:py-24">
+        {!projects.length ? <p className="text-[17px]">Muy pronto vas a ver acá nuestros casos.</p> : null}
         <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (
             <Reveal key={project.id} delay={(index % 3) * 90}>

@@ -8,7 +8,8 @@ import { site } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Brand";
 
-export function Header() {
+// settings: { instagramHandle, instagramUrl, headerCta } (Configuración del panel)
+export function Header({ settings = { instagramHandle: site.instagram.handle, instagramUrl: site.instagram.url } }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -95,10 +96,10 @@ export function Header() {
           ))}
         </ul>
         <Link href="/contacto" onClick={(event) => handleNav(event, "/contacto")} className="btn-cacao mt-12 self-start">
-          Contanos tu idea
+          {settings.headerCta || "Contanos tu idea"}
         </Link>
-        <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="mono-label mt-8">
-          {site.instagram.handle}
+        <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="mono-label mt-8">
+          {settings.instagramHandle}
         </a>
       </nav>
     </div>
