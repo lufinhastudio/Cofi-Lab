@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Briefcase, Contact, Home, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Briefcase, Contact, Home, Users } from "lucide-react";
 import { PageHeader } from "@/components/admin/ui";
 import { CONTENT_AREAS } from "@/lib/content/schemas";
 
@@ -9,7 +9,8 @@ const areas = [
   { href: "/admin/contenido/inicio", key: "home", icon: Home },
   { href: "/admin/contenido/clientes", key: "clients", icon: Briefcase },
   { href: "/admin/contenido/nosotras", key: "about", icon: Users },
-  { href: "/admin/contenido/contacto", key: "contact", icon: Contact }
+  { href: "/admin/contenido/contacto", key: "contact", icon: Contact },
+  { href: "/admin/contenido/cofiteca", key: "cofiteca", icon: BookOpen }
 ];
 
 function AreaLink({ href, title, description, icon: Icon }) {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Briefcase, FileText, MessageSquareQuote, Plus, Settings } from "lucide-react";
+import { AlertTriangle, ArrowRight, BookOpen, Briefcase, FileText, MessageSquareQuote, Plus, Settings } from "lucide-react";
 import { Badge, Card, PageHeader } from "@/components/admin/ui";
 import { PROJECT_STATUS, STATUS_TONE } from "@/lib/content/options";
 import { requireAdminPage } from "@/lib/server/admin";
@@ -21,6 +21,7 @@ const quickLinks = [
   { href: "/admin/marcas", label: "Marcas y trabajos", text: "Campañas, galerías y reels", icon: Briefcase },
   { href: "/admin/contenido", label: "Contenido del sitio", text: "Inicio, Clientes, Nosotras, Contacto", icon: FileText },
   { href: "/admin/testimonios", label: "Testimonios", text: "Lo que dicen las marcas", icon: MessageSquareQuote },
+  { href: "/admin/cofiteca", label: "La Cofiteca", text: "Libros, juegos y productos", icon: BookOpen },
   { href: "/admin/configuracion", label: "Configuración", text: "Redes, contacto y pie", icon: Settings }
 ];
 

@@ -21,7 +21,7 @@ app/
     (panel)/                  Todo exige sesión (layout.js lo verifica en el servidor)
       marcas/ [id]/           Marcas y trabajos + constructor de secciones
       contenido/ [area]/      Inicio, Clientes, Nosotras, Contacto
-      testimonios/ configuracion/
+      testimonios/ cofiteca/ configuracion/
   api/admin/                  APIs protegidas (sesión + origen) para cada recurso
 components/site/              Componentes del sitio (diseño público, sin cambios de estilo)
 components/admin/             Interfaz del panel
@@ -44,7 +44,11 @@ scripts/                      Esquema, admins, importación legacy, limpieza de 
 | Testimonios         | ABM, ocultar, ordenar, foto.                                                                                                   |
 | Configuración       | Instagram, redes del equipo, email, WhatsApp, textos del pie y del menú, frase y descripción para buscadores.                  |
 
-Las tablas `cofiteca_products` y `contact_messages` siguen en la base, pero ya no tienen pantalla en el panel.
+| La Cofiteca         | Alta, edición, baja, ocultar y orden de libros, juegos y productos (nombre, categoría, descripciones, fotos, link, mensaje de WhatsApp). |
+
+**La CoFiteca en la web (`/cofiteca`):** mientras no haya ningún producto visible, la página muestra el bloque «Próximamente» (textos editables en Contenido › La CoFiteca). Apenas se publica el primer producto, aparece el catálogo solo. El botón de WhatsApp de cada producto se muestra si hay un WhatsApp cargado en Configuración.
+
+La tabla `contact_messages` sigue en la base como respaldo de las consultas, pero no tiene pantalla en el panel.
 
 ### Formulario de contacto (Resend)
 
