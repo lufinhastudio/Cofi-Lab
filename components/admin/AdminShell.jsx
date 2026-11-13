@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Briefcase, ExternalLink, FileText, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Settings, X } from "lucide-react";
+import { BookOpen, Briefcase, ExternalLink, FileText, LayoutDashboard, LogOut, Menu, MessageSquareQuote, Settings, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminProviders } from "./ui";
 
@@ -13,6 +13,7 @@ const NAV = [
   { href: "/admin/marcas", label: "Marcas y trabajos", icon: Briefcase },
   { href: "/admin/contenido", label: "Contenido del sitio", icon: FileText },
   { href: "/admin/testimonios", label: "Testimonios", icon: MessageSquareQuote },
+  { href: "/admin/cofiteca", label: "La Cofiteca", icon: BookOpen },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings }
 ];
 

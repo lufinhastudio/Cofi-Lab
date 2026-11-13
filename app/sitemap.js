@@ -5,7 +5,7 @@ export const revalidate = 3600;
 
 export default async function sitemap() {
   const projects = await getPublicProjects();
-  const pages = ["", "/nosotras", "/clientes", "/contacto"].map((path) => ({
+  const pages = ["", "/nosotras", "/clientes", "/cofiteca", "/contacto"].map((path) => ({
     url: `${site.url}${path}`,
     changeFrequency: "monthly",
     priority: path ? 0.8 : 1

@@ -37,6 +37,7 @@ export const site = {
     { label: "Servicios", href: "/#servicios" },
     { label: "Clientes", href: "/clientes" },
     { label: "Nosotras", href: "/nosotras" },
+    { label: "La CoFiteca", href: "/cofiteca" },
     { label: "Contacto", href: "/contacto" }
   ]
 };
