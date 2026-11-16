@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { Paragraphs } from "@/lib/emphasis";
+import { Emphasis, Paragraphs } from "@/lib/emphasis";
 import { getHomeProjects, getPublicTestimonials } from "@/lib/server/content";
 import { getSiteContent, getSiteSettings } from "@/lib/server/siteContent";
 import { SectionLabel, Shape, StageTag, toneClass } from "@/components/site/Brand";
@@ -15,6 +15,43 @@ import { cn } from "@/lib/utils";
 export const revalidate = 60;
 
 const number = (index) => String(index + 1).padStart(2, "0");
+
+const lines = (text) =>
+  String(text || "")
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+// "Por qué CoFi": cada renglón es un bloque. El que va entero entre ** ** es el
+// título grande; el resto es texto liviano con **negritas** para dar ritmo.
+const HEADLINE = /^\*\*((?:(?!\*\*).)+)\*\*$/;
+
+function PositioningText({ text }) {
+  const blocks = lines(text);
+  if (!blocks.some((block) => HEADLINE.test(block))) {
+    return (
+      <p className="title-pop mt-5 max-w-[34ch] text-[26px] leading-[1.2] text-crema [text-wrap:pretty] sm:text-[34px] lg:text-[40px]">
+        <Emphasis text={blocks.join(" ")} strongClassName="text-lemon" emClassName="not-italic text-lemon" />
+      </p>
+    );
+  }
+  return (
+    <div className="mt-6">
+      {blocks.map((block, index) => {
+        const headline = block.match(HEADLINE);
+        return headline ? (
+          <p key={index} className="title-pop mt-4 max-w-[24ch] text-[34px] leading-[1.1] text-crema [text-wrap:balance] sm:text-[48px] lg:text-[60px]">
+            <Emphasis text={headline[1]} emClassName="not-italic text-lemon" />
+          </p>
+        ) : (
+          <p key={index} className={cn("max-w-[36rem] text-[18px] leading-[1.55] text-crema/80 [text-wrap:pretty] sm:max-w-[46rem] sm:text-[21px]", index > 0 && "mt-6")}>
+            <Emphasis text={block} strongClassName="font-bold text-crema" emClassName="not-italic text-lemon" />
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const [content, settings, testimonials, projects] = await Promise.all([
@@ -34,8 +71,13 @@ export default async function HomePage() {
             <span className="h-2.5 w-2.5 animate-blink rounded-full bg-watermelon" aria-hidden="true" />
             {[settings.instagramHandle, content.heroLabel].filter(Boolean).join(" · ")}
           </p>
-          <h1 className="title-pop mt-6 max-w-[15ch] animate-fade-in-up text-[52px] [animation-delay:80ms] sm:text-[84px] lg:text-[112px]">
-            {content.heroTitle}
+          {/* En celular cada renglón del título es una línea; desde tablet fluye como una frase. */}
+          <h1 className="title-pop mt-6 max-w-[15ch] animate-fade-in-up text-[11vw] leading-[1.1] [animation-delay:80ms] sm:text-[84px] sm:leading-[0.98] lg:text-[112px]">
+            {lines(content.heroTitle).map((line, index) => (
+              <span key={index} className="block sm:inline">
+                {line}{" "}
+              </span>
+            ))}
           </h1>
           {content.heroText ? (
             <p className="mt-8 max-w-[54rem] animate-fade-in-up text-[17px] leading-relaxed [animation-delay:160ms] sm:text-[19px]">{content.heroText}</p>
@@ -153,7 +195,7 @@ export default async function HomePage() {
             <SectionLabel number="03" tone="lemon">
               {content.positioningLabel}
             </SectionLabel>
-            <p className="title-pop mt-5 max-w-[34ch] text-[26px] leading-[1.2] text-crema [text-wrap:pretty] sm:text-[34px] lg:text-[40px]">{content.positioningText}</p>
+            <PositioningText text={content.positioningText} />
             {content.positioningTags.length ? (
               <div className="mt-8 flex flex-wrap gap-2">
                 {content.positioningTags.map((tag, index) => (

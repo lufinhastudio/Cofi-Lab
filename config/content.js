@@ -105,7 +105,12 @@ export const differentiators = [
 
 // Posicionamiento (04) y etiquetas
 export const positioning = {
-  text: "Para marcas que quieren consolidar su presencia digital, CoFi es el laboratorio creativo que se suma a tu equipo: estrategia y contenido en un solo lugar, junto a equipos aliados de confianza para todo lo demás.",
+  // Cada renglón es un bloque: el que va entero entre ** ** es el título grande.
+  text: [
+    "Para marcas que quieren consolidar su presencia digital,",
+    "**CoFi es el *laboratorio creativo* que se suma a tu equipo:**",
+    "estrategia y contenido **en un solo lugar**, junto a **equipos aliados de confianza** para todo lo demás."
+  ].join("\n"),
   tags: [
     { label: "Integral", tone: "periwinkle" },
     { label: "Cercana", tone: "lemon" },
@@ -181,7 +186,7 @@ export const clientsPage = {
 export const contactPage = {
   title: "¿Tenés un proyecto en mente?",
   highlight: "Contanos tu idea.",
-  intro: "Escribinos y conversemos sobre cómo podemos trabajar juntas en la comunicación de tu marca.",
+  intro: "Escribinos y conversemos sobre cómo podemos trabajar juntos en la comunicación de tu marca.",
   services: [
     "Estrategia de marca",
     "Gestión de redes",
