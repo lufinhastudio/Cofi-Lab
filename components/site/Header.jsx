@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { site } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -14,9 +14,16 @@ export function Header({ settings = { instagramHandle: site.instagram.handle, in
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const scrollToTopOnNavigation = useRef(false);
 
   useEffect(() => setMounted(true), []);
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+    if (scrollToTopOnNavigation.current) {
+      scrollToTopOnNavigation.current = false;
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [pathname]);
 
   // El header es sticky y al achicarse cambia de alto (16 px en celular, 32 px en
   // computadora): eso corre el scroll y, con un solo umbral, lo volvía a cruzar y
@@ -60,12 +67,16 @@ export function Header({ settings = { instagramHandle: site.instagram.handle, in
   // Next no navega cuando la ruta no cambia, por eso el logo "no hacía nada"
   // y "Servicios" dejaba el menú abierto estando en el inicio.
   const handleNav = (event, href) => {
+    // Liberar el body antes de que Next intente ubicar la página nueva.
+    document.body.style.overflow = "";
     setOpen(false);
     const [rawPath, hash] = href.split("#");
     const path = rawPath || "/";
-    if (path !== pathname) return;
+    if (path !== pathname) {
+      scrollToTopOnNavigation.current = !hash;
+      return;
+    }
     event.preventDefault();
-    document.body.style.overflow = "";
     requestAnimationFrame(() => {
       const target = hash ? document.getElementById(hash) : null;
       if (target) {
